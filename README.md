@@ -2,7 +2,7 @@
 
 An Apple Watch app for tracking and entering data into your Beeminder goals.
 
-**[View Website](https://giovanni.github.io/beeWatch)** | **[Technical Docs](TECHNICAL.md)**
+**[View Website](https://giovannicoppola.github.io/beeWatch)** | **[Technical Docs](TECHNICAL.md)**
 
 ## Features
 
