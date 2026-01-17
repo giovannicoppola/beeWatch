@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BeeWatch - Beeminder for Apple Watch</title>
+    <meta name="description" content="Track your Beeminder goals directly from your Apple Watch. Quick data entry, urgency-sorted goals, and watch face complications.">
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="hero">
+        <nav class="nav">
+            <div class="nav-brand">
+                <span class="logo">🐝</span>
+                <span class="brand-name">BeeWatch</span>
+            </div>
+            <div class="nav-links">
+                <a href="#features">Features</a>
+                <a href="#screenshots">Screenshots</a>
+                <a href="#setup">Setup</a>
+                <a href="https://github.com/giovanni/beeWatch" class="btn btn-outline">GitHub</a>
+            </div>
+        </nav>
+
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1>Beeminder on your wrist</h1>
+                <p class="hero-subtitle">Track your goals, enter data, and stay on track—all from your Apple Watch. Never derail again.</p>
+                <div class="hero-buttons">
+                    <a href="#setup" class="btn btn-primary">Get Started</a>
+                    <a href="https://github.com/giovanni/beeWatch" class="btn btn-secondary">View on GitHub</a>
+                </div>
+            </div>
+            <div class="hero-image">
+                <div class="watch-mockup">
+                    <div class="watch-screen">
+                        <div class="goal-item urgent">
+                            <span class="indicator red"></span>
+                            <div class="goal-info">
+                                <span class="goal-name">Exercise</span>
+                                <span class="goal-time">3h 20m</span>
+                            </div>
+                        </div>
+                        <div class="goal-item">
+                            <span class="indicator orange"></span>
+                            <div class="goal-info">
+                                <span class="goal-name">Reading</span>
+                                <span class="goal-time">1d 5h</span>
+                            </div>
+                        </div>
+                        <div class="goal-item">
+                            <span class="indicator green"></span>
+                            <div class="goal-info">
+                                <span class="goal-name">Meditation</span>
+                                <span class="goal-time">5d 12h</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section id="features" class="features">
+        <div class="container">
+            <h2>Features</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Quick Data Entry</h3>
+                    <p>Large buttons optimized for the watch. Your most frequent values appear first for one-tap entry.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎯</div>
+                    <h3>Urgency Sorted</h3>
+                    <p>Goals automatically sorted by deadline. Red means act now, green means you're safe.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⌚</div>
+                    <h3>Complications</h3>
+                    <p>Add your most urgent goal to any watch face. See your status at a glance.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔔</div>
+                    <h3>Smart Reminders</h3>
+                    <p>Customizable notifications that only bug you when you need to enter data.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📱</div>
+                    <h3>Standalone</h3>
+                    <p>Works independently on your watch. No iPhone needed once configured.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔒</div>
+                    <h3>Secure</h3>
+                    <p>Your API key is stored securely in the iOS Keychain. Never transmitted insecurely.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="screenshots" class="screenshots">
+        <div class="container">
+            <h2>See It In Action</h2>
+            <div class="screenshot-grid">
+                <div class="screenshot-item">
+                    <div class="watch-mockup small">
+                        <div class="watch-screen">
+                            <div class="screen-title">Goals</div>
+                            <div class="goal-list-mini">
+                                <div class="goal-mini"><span class="dot red"></span> Exercise</div>
+                                <div class="goal-mini"><span class="dot orange"></span> Reading</div>
+                                <div class="goal-mini"><span class="dot green"></span> Meditate</div>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="screenshot-caption">Goal List</p>
+                </div>
+                <div class="screenshot-item">
+                    <div class="watch-mockup small">
+                        <div class="watch-screen">
+                            <div class="screen-title">Exercise</div>
+                            <div class="quick-buttons">
+                                <span class="qb">1</span>
+                                <span class="qb">5</span>
+                                <span class="qb">10</span>
+                            </div>
+                            <div class="custom-btn">+ Custom</div>
+                        </div>
+                    </div>
+                    <p class="screenshot-caption">Quick Entry</p>
+                </div>
+                <div class="screenshot-item">
+                    <div class="watch-mockup small">
+                        <div class="watch-screen complication">
+                            <div class="comp-circular">
+                                <span class="comp-number">2</span>
+                                <span class="comp-label">days</span>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="screenshot-caption">Complication</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="setup" class="setup">
+        <div class="container">
+            <h2>Getting Started</h2>
+
+            <div class="setup-steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Get Your API Key</h3>
+                        <p>Log in to <a href="https://www.beeminder.com/settings/account" target="_blank">Beeminder</a> and find your Auth Token in Account Settings.</p>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>Install BeeWatch</h3>
+                        <p>Build from source using Xcode, or download the latest release from GitHub.</p>
+                        <code>
+                            brew install xcodegen<br>
+                            git clone https://github.com/giovanni/beeWatch<br>
+                            cd beeWatch && xcodegen generate<br>
+                            open beeWatch.xcodeproj
+                        </code>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>Configure</h3>
+                        <p>Open BeeWatch on your Watch, tap the gear icon, and enter your API key. Tap "Test Connection" to verify.</p>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h3>Start Tracking</h3>
+                        <p>Your goals will appear sorted by urgency. Tap a goal to enter data with one tap!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="requirements">
+        <div class="container">
+            <h2>Requirements</h2>
+            <div class="req-grid">
+                <div class="req-item">
+                    <span class="req-icon">📱</span>
+                    <span class="req-text">iOS 17.0+</span>
+                </div>
+                <div class="req-item">
+                    <span class="req-icon">⌚</span>
+                    <span class="req-text">watchOS 10.0+</span>
+                </div>
+                <div class="req-item">
+                    <span class="req-icon">🐝</span>
+                    <span class="req-text">Beeminder Account</span>
+                </div>
+                <div class="req-item">
+                    <span class="req-icon">🔑</span>
+                    <span class="req-text">Beeminder API Key</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="faq">
+        <div class="container">
+            <h2>FAQ</h2>
+            <div class="faq-list">
+                <details class="faq-item">
+                    <summary>Where do I find my Beeminder API key?</summary>
+                    <p>Log in to Beeminder, go to <strong>Settings → Account</strong>, and scroll down to find your <strong>Auth Token</strong>. Copy this value and paste it into BeeWatch settings.</p>
+                </details>
+
+                <details class="faq-item">
+                    <summary>Does BeeWatch work without my iPhone nearby?</summary>
+                    <p>Yes! Once configured, BeeWatch works completely independently on your Apple Watch. It connects directly to Beeminder's servers over WiFi or cellular (if your watch supports it).</p>
+                </details>
+
+                <details class="faq-item">
+                    <summary>What do the colors mean?</summary>
+                    <p>
+                        <strong style="color: #ff3b30;">Red</strong> = Derailing today (act now!)<br>
+                        <strong style="color: #ff9500;">Orange</strong> = Derailing tomorrow<br>
+                        <strong style="color: #007aff;">Blue</strong> = Due within 3 days<br>
+                        <strong style="color: #34c759;">Green</strong> = Safe (more than 3 days buffer)
+                    </p>
+                </details>
+
+                <details class="faq-item">
+                    <summary>How do I add a complication to my watch face?</summary>
+                    <p>Long-press on your watch face, tap "Edit", swipe to the complications page, tap a complication slot, and select "BeeWatch" from the list.</p>
+                </details>
+
+                <details class="faq-item">
+                    <summary>Is my data secure?</summary>
+                    <p>Yes. Your API key is stored in the iOS Keychain (the same secure storage used for passwords). All communication with Beeminder uses HTTPS encryption.</p>
+                </details>
+
+                <details class="faq-item">
+                    <summary>Can I use BeeWatch with multiple Beeminder accounts?</summary>
+                    <p>Currently, BeeWatch supports one account at a time. Multi-account support may be added in a future update.</p>
+                </details>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <span class="logo">🐝</span>
+                    <span>BeeWatch</span>
+                </div>
+                <div class="footer-links">
+                    <a href="https://github.com/giovanni/beeWatch">GitHub</a>
+                    <a href="https://github.com/giovanni/beeWatch/issues">Report Issue</a>
+                    <a href="https://www.beeminder.com">Beeminder</a>
+                </div>
+                <p class="footer-note">BeeWatch is an independent project and is not affiliated with Beeminder.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>

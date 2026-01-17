@@ -1,0 +1,664 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0837E0031E56288E5E609316 /* Goal.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2DF5D91346B6AA2461EE35D /* Goal.swift */; };
+		0C9DFA49E870D3F38E464E99 /* BeeWatchComplications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AAB8CE8184B80449FBF45B6 /* BeeWatchComplications.swift */; };
+		11CE00963540F96F59D62B13 /* Date+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F77D343BDE42195AA9DFC2CA /* Date+Extensions.swift */; };
+		168CD8C1C5A42E926447D12A /* DataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82563CBC1F1FB5194FD90937 /* DataStore.swift */; };
+		2D92599C4796CC36F54BE5F1 /* Datapoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = A735A3190D06327D5A298DF9 /* Datapoint.swift */; };
+		38BD0CEED69EB51E8A243435 /* BeeminderAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 245A8E17D36FA75CD2F7ABFC /* BeeminderAPI.swift */; };
+		430B72026ADE42E62409EC7B /* beeWatch Watch App Complications.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = CA6BFB4E62F937624F11C3D5 /* beeWatch Watch App Complications.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		50D00002807D2AA34DD2B7F3 /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52623EE145B446781C5C4055 /* NotificationManager.swift */; };
+		59C9BD741BC80833138A7283 /* BeeminderAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 245A8E17D36FA75CD2F7ABFC /* BeeminderAPI.swift */; };
+		5E5FE28A26FA1A6AA50B786E /* GoalListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2435B740C8022B034297528C /* GoalListView.swift */; };
+		63D3C6CF160F6AEFD0CD83FC /* beeWatch Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = AD7B578B9765C923BCB7126E /* beeWatch Watch App.app */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		6D188298EFB036216C3A0BF4 /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52623EE145B446781C5C4055 /* NotificationManager.swift */; };
+		6DDEC7487AD58D1B509FED36 /* Datapoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = A735A3190D06327D5A298DF9 /* Datapoint.swift */; };
+		86F0BA6EAF8567193D8EFE04 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D3CC69E7039FFBADE0DC2B5 /* ContentView.swift */; };
+		8DE7B2835C13F9667E598581 /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52623EE145B446781C5C4055 /* NotificationManager.swift */; };
+		922B3C9F1A3D97F3E3D01291 /* ComplicationBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 331CA6BC0C550BA562D70DF2 /* ComplicationBundle.swift */; };
+		94D4330EDC61430E1873D694 /* DataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82563CBC1F1FB5194FD90937 /* DataStore.swift */; };
+		A206887BCF93B169CBB6C3D1 /* Date+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F77D343BDE42195AA9DFC2CA /* Date+Extensions.swift */; };
+		A4CED5243498E2FAC97B55F5 /* DataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82563CBC1F1FB5194FD90937 /* DataStore.swift */; };
+		B2290C838897A5F874B55496 /* UserSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CE6C9626A167FE024955B71 /* UserSettings.swift */; };
+		C4CB2548013D8E7F131FB29B /* Goal.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2DF5D91346B6AA2461EE35D /* Goal.swift */; };
+		C5755AA562227B3B90B7795D /* GoalDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56D04B545DC323095D0BD9C4 /* GoalDetailView.swift */; };
+		C5B02F190CB6A9216F63C8EC /* Datapoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = A735A3190D06327D5A298DF9 /* Datapoint.swift */; };
+		C9D8F5E713C12E372CCC4844 /* Date+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F77D343BDE42195AA9DFC2CA /* Date+Extensions.swift */; };
+		CCEA90CB57A986D478C36BE1 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ECB51672F7ECBEB47C536E1 /* SettingsView.swift */; };
+		CFBACC8E25490099AB880541 /* beeWatchApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C9E24009C04A9DE303ACD8C /* beeWatchApp.swift */; };
+		D526CE7C3B058609ECA16F10 /* ReminderSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4F54B12D82028F97A8CFDFC /* ReminderSettingsView.swift */; };
+		DB3321D86DCCBE38D26BDCC9 /* UserSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CE6C9626A167FE024955B71 /* UserSettings.swift */; };
+		E8BF54C635CC38E6DE940CE7 /* Goal.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2DF5D91346B6AA2461EE35D /* Goal.swift */; };
+		F1757E3EBD4D2A8FCA293877 /* DataEntryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 890FAB84A9F02ECAF818749B /* DataEntryView.swift */; };
+		F3FDEC22168FA4736095525A /* BeeminderAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 245A8E17D36FA75CD2F7ABFC /* BeeminderAPI.swift */; };
+		F6EE6E0A22294BE47AFD8344 /* beeWatchApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6A0C5B82A9F7A704CA7216E /* beeWatchApp.swift */; };
+		FC4A666768DE02CDD72CCEFF /* UserSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CE6C9626A167FE024955B71 /* UserSettings.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		01095E3BDA51259C2AC49456 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = EDE6207A5B2EF16721009DF9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 850CD8495B5C5C92E2CD14E8;
+			remoteInfo = "beeWatch Watch App Complications";
+		};
+		9110F51D2FE0ECD3ADBE7FA9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = EDE6207A5B2EF16721009DF9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 137371B5FEFD31A9F82A379F;
+			remoteInfo = "beeWatch Watch App";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		14A1E18A46BB9D4C5E3838D9 /* Embed Watch Content */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
+			dstSubfolderSpec = 16;
+			files = (
+				63D3C6CF160F6AEFD0CD83FC /* beeWatch Watch App.app in Embed Watch Content */,
+			);
+			name = "Embed Watch Content";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4ED298FEEFF1B0BEFD324E88 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				430B72026ADE42E62409EC7B /* beeWatch Watch App Complications.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		0F0B73CD2F2203A1B7E8FC4E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		2435B740C8022B034297528C /* GoalListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalListView.swift; sourceTree = "<group>"; };
+		245A8E17D36FA75CD2F7ABFC /* BeeminderAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BeeminderAPI.swift; sourceTree = "<group>"; };
+		331CA6BC0C550BA562D70DF2 /* ComplicationBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComplicationBundle.swift; sourceTree = "<group>"; };
+		3AAB8CE8184B80449FBF45B6 /* BeeWatchComplications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BeeWatchComplications.swift; sourceTree = "<group>"; };
+		52623EE145B446781C5C4055 /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
+		56D04B545DC323095D0BD9C4 /* GoalDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalDetailView.swift; sourceTree = "<group>"; };
+		5C9E24009C04A9DE303ACD8C /* beeWatchApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = beeWatchApp.swift; sourceTree = "<group>"; };
+		5CE6C9626A167FE024955B71 /* UserSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSettings.swift; sourceTree = "<group>"; };
+		82563CBC1F1FB5194FD90937 /* DataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStore.swift; sourceTree = "<group>"; };
+		8333709677ABC079BE80B26E /* Complications.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Complications.entitlements; sourceTree = "<group>"; };
+		890FAB84A9F02ECAF818749B /* DataEntryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataEntryView.swift; sourceTree = "<group>"; };
+		8E2FBE70C27CAD65C7526EA8 /* beeWatch.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = beeWatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8ECB51672F7ECBEB47C536E1 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		9D3CC69E7039FFBADE0DC2B5 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		A2DF5D91346B6AA2461EE35D /* Goal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Goal.swift; sourceTree = "<group>"; };
+		A735A3190D06327D5A298DF9 /* Datapoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Datapoint.swift; sourceTree = "<group>"; };
+		AD7B578B9765C923BCB7126E /* beeWatch Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "beeWatch Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B6A0C5B82A9F7A704CA7216E /* beeWatchApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = beeWatchApp.swift; sourceTree = "<group>"; };
+		C4F54B12D82028F97A8CFDFC /* ReminderSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderSettingsView.swift; sourceTree = "<group>"; };
+		CA6BFB4E62F937624F11C3D5 /* beeWatch Watch App Complications.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "beeWatch Watch App Complications.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		F77D343BDE42195AA9DFC2CA /* Date+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Extensions.swift"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		2B831EDE56C96025D6466A78 /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				C61FAC80ACFA160EB9209818 /* Extensions */,
+				A2645C08E45FB56328AF5CF9 /* Models */,
+				9F3927AED2B6D265B701A5DF /* Services */,
+			);
+			path = Shared;
+			sourceTree = "<group>";
+		};
+		6CF8BB1FCBC9103DD2B8CB82 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				890FAB84A9F02ECAF818749B /* DataEntryView.swift */,
+				56D04B545DC323095D0BD9C4 /* GoalDetailView.swift */,
+				2435B740C8022B034297528C /* GoalListView.swift */,
+				C4F54B12D82028F97A8CFDFC /* ReminderSettingsView.swift */,
+				8ECB51672F7ECBEB47C536E1 /* SettingsView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		702F1E9BDF8647336BB8B400 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				CA6BFB4E62F937624F11C3D5 /* beeWatch Watch App Complications.appex */,
+				AD7B578B9765C923BCB7126E /* beeWatch Watch App.app */,
+				8E2FBE70C27CAD65C7526EA8 /* beeWatch.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		8FDBE94C7F448C8FA7650B15 /* beeWatch */ = {
+			isa = PBXGroup;
+			children = (
+				B6A0C5B82A9F7A704CA7216E /* beeWatchApp.swift */,
+				9D3CC69E7039FFBADE0DC2B5 /* ContentView.swift */,
+			);
+			path = beeWatch;
+			sourceTree = "<group>";
+		};
+		9F3927AED2B6D265B701A5DF /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				245A8E17D36FA75CD2F7ABFC /* BeeminderAPI.swift */,
+				82563CBC1F1FB5194FD90937 /* DataStore.swift */,
+				52623EE145B446781C5C4055 /* NotificationManager.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		A2645C08E45FB56328AF5CF9 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				A735A3190D06327D5A298DF9 /* Datapoint.swift */,
+				A2DF5D91346B6AA2461EE35D /* Goal.swift */,
+				5CE6C9626A167FE024955B71 /* UserSettings.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		AD994D2DF8ADDE13BD0D12A1 = {
+			isa = PBXGroup;
+			children = (
+				8FDBE94C7F448C8FA7650B15 /* beeWatch */,
+				B08C755C9264E50FFCDDE315 /* beeWatch Watch App */,
+				B9FEF1C3460BD1332B26544C /* Complications */,
+				2B831EDE56C96025D6466A78 /* Shared */,
+				702F1E9BDF8647336BB8B400 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		B08C755C9264E50FFCDDE315 /* beeWatch Watch App */ = {
+			isa = PBXGroup;
+			children = (
+				5C9E24009C04A9DE303ACD8C /* beeWatchApp.swift */,
+				6CF8BB1FCBC9103DD2B8CB82 /* Views */,
+			);
+			path = "beeWatch Watch App";
+			sourceTree = "<group>";
+		};
+		B9FEF1C3460BD1332B26544C /* Complications */ = {
+			isa = PBXGroup;
+			children = (
+				3AAB8CE8184B80449FBF45B6 /* BeeWatchComplications.swift */,
+				331CA6BC0C550BA562D70DF2 /* ComplicationBundle.swift */,
+				8333709677ABC079BE80B26E /* Complications.entitlements */,
+				0F0B73CD2F2203A1B7E8FC4E /* Info.plist */,
+			);
+			name = Complications;
+			path = "beeWatch Watch App/Complications";
+			sourceTree = "<group>";
+		};
+		C61FAC80ACFA160EB9209818 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				F77D343BDE42195AA9DFC2CA /* Date+Extensions.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		137371B5FEFD31A9F82A379F /* beeWatch Watch App */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2A84173B0CBB9E6A64044877 /* Build configuration list for PBXNativeTarget "beeWatch Watch App" */;
+			buildPhases = (
+				9C0398E78A9D0DE684C4C25C /* Sources */,
+				4ED298FEEFF1B0BEFD324E88 /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				DF26B8E0CF4E527740A9E09E /* PBXTargetDependency */,
+			);
+			name = "beeWatch Watch App";
+			packageProductDependencies = (
+			);
+			productName = "beeWatch Watch App";
+			productReference = AD7B578B9765C923BCB7126E /* beeWatch Watch App.app */;
+			productType = "com.apple.product-type.application";
+		};
+		7AB6E7490D8B0676DF03EEF1 /* beeWatch */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 01B560BDBBD69737BF589A25 /* Build configuration list for PBXNativeTarget "beeWatch" */;
+			buildPhases = (
+				99A2EDDF96F2B115D76D1C7E /* Sources */,
+				14A1E18A46BB9D4C5E3838D9 /* Embed Watch Content */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				CFBEE1BB7B103F166753612C /* PBXTargetDependency */,
+			);
+			name = beeWatch;
+			packageProductDependencies = (
+			);
+			productName = beeWatch;
+			productReference = 8E2FBE70C27CAD65C7526EA8 /* beeWatch.app */;
+			productType = "com.apple.product-type.application";
+		};
+		850CD8495B5C5C92E2CD14E8 /* beeWatch Watch App Complications */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = EB677B98245B66B51FC472DE /* Build configuration list for PBXNativeTarget "beeWatch Watch App Complications" */;
+			buildPhases = (
+				3CC3EF879FA88166307238D7 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "beeWatch Watch App Complications";
+			packageProductDependencies = (
+			);
+			productName = "beeWatch Watch App Complications";
+			productReference = CA6BFB4E62F937624F11C3D5 /* beeWatch Watch App Complications.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		EDE6207A5B2EF16721009DF9 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					137371B5FEFD31A9F82A379F = {
+						DevelopmentTeam = VDG762YNX9;
+						ProvisioningStyle = Automatic;
+					};
+					7AB6E7490D8B0676DF03EEF1 = {
+						DevelopmentTeam = VDG762YNX9;
+						ProvisioningStyle = Automatic;
+					};
+					850CD8495B5C5C92E2CD14E8 = {
+						DevelopmentTeam = VDG762YNX9;
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 05B2A7C03722FD74FAEAD437 /* Build configuration list for PBXProject "beeWatch" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = AD994D2DF8ADDE13BD0D12A1;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				7AB6E7490D8B0676DF03EEF1 /* beeWatch */,
+				137371B5FEFD31A9F82A379F /* beeWatch Watch App */,
+				850CD8495B5C5C92E2CD14E8 /* beeWatch Watch App Complications */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		3CC3EF879FA88166307238D7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0C9DFA49E870D3F38E464E99 /* BeeWatchComplications.swift in Sources */,
+				38BD0CEED69EB51E8A243435 /* BeeminderAPI.swift in Sources */,
+				922B3C9F1A3D97F3E3D01291 /* ComplicationBundle.swift in Sources */,
+				168CD8C1C5A42E926447D12A /* DataStore.swift in Sources */,
+				C5B02F190CB6A9216F63C8EC /* Datapoint.swift in Sources */,
+				11CE00963540F96F59D62B13 /* Date+Extensions.swift in Sources */,
+				0837E0031E56288E5E609316 /* Goal.swift in Sources */,
+				8DE7B2835C13F9667E598581 /* NotificationManager.swift in Sources */,
+				B2290C838897A5F874B55496 /* UserSettings.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		99A2EDDF96F2B115D76D1C7E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				59C9BD741BC80833138A7283 /* BeeminderAPI.swift in Sources */,
+				86F0BA6EAF8567193D8EFE04 /* ContentView.swift in Sources */,
+				94D4330EDC61430E1873D694 /* DataStore.swift in Sources */,
+				6DDEC7487AD58D1B509FED36 /* Datapoint.swift in Sources */,
+				A206887BCF93B169CBB6C3D1 /* Date+Extensions.swift in Sources */,
+				E8BF54C635CC38E6DE940CE7 /* Goal.swift in Sources */,
+				6D188298EFB036216C3A0BF4 /* NotificationManager.swift in Sources */,
+				DB3321D86DCCBE38D26BDCC9 /* UserSettings.swift in Sources */,
+				F6EE6E0A22294BE47AFD8344 /* beeWatchApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9C0398E78A9D0DE684C4C25C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F3FDEC22168FA4736095525A /* BeeminderAPI.swift in Sources */,
+				F1757E3EBD4D2A8FCA293877 /* DataEntryView.swift in Sources */,
+				A4CED5243498E2FAC97B55F5 /* DataStore.swift in Sources */,
+				2D92599C4796CC36F54BE5F1 /* Datapoint.swift in Sources */,
+				C9D8F5E713C12E372CCC4844 /* Date+Extensions.swift in Sources */,
+				C4CB2548013D8E7F131FB29B /* Goal.swift in Sources */,
+				C5755AA562227B3B90B7795D /* GoalDetailView.swift in Sources */,
+				5E5FE28A26FA1A6AA50B786E /* GoalListView.swift in Sources */,
+				50D00002807D2AA34DD2B7F3 /* NotificationManager.swift in Sources */,
+				D526CE7C3B058609ECA16F10 /* ReminderSettingsView.swift in Sources */,
+				CCEA90CB57A986D478C36BE1 /* SettingsView.swift in Sources */,
+				FC4A666768DE02CDD72CCEFF /* UserSettings.swift in Sources */,
+				CFBACC8E25490099AB880541 /* beeWatchApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		CFBEE1BB7B103F166753612C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 137371B5FEFD31A9F82A379F /* beeWatch Watch App */;
+			targetProxy = 9110F51D2FE0ECD3ADBE7FA9 /* PBXContainerItemProxy */;
+		};
+		DF26B8E0CF4E527740A9E09E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 850CD8495B5C5C92E2CD14E8 /* beeWatch Watch App Complications */;
+			targetProxy = 01095E3BDA51259C2AC49456 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		00A764F710E81A5F56908AC3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_GENERATION_MODE = GeneratedFile;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.beewatch.ios;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		720246669D6950CA44B58228 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "beeWatch Watch App/Complications/Complications.entitlements";
+				CURRENT_PROJECT_VERSION = 1;
+				INFOPLIST_FILE = "beeWatch Watch App/Complications/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.beewatch.ios.watchkitapp.complications;
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 4;
+			};
+			name = Debug;
+		};
+		7CAF3897D156C1206C6D5DF6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "beeWatch Watch App/Complications/Info.plist";
+				INFOPLIST_GENERATION_MODE = GeneratedFile;
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.beewatch.ios;
+				INFOPLIST_KEY_WKRunsIndependentlyOfCompanionApp = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.beewatch.ios.watchkitapp;
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 4;
+			};
+			name = Release;
+		};
+		9009356BC8F18D68F81D6E3D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = VDG762YNX9;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.9;
+				WATCHOS_DEPLOYMENT_TARGET = 10.0;
+			};
+			name = Debug;
+		};
+		A88608C8500F773C38FBB0B3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "beeWatch Watch App/Complications/Complications.entitlements";
+				CURRENT_PROJECT_VERSION = 1;
+				INFOPLIST_FILE = "beeWatch Watch App/Complications/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.beewatch.ios.watchkitapp.complications;
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 4;
+			};
+			name = Release;
+		};
+		B1D58FE51EB8368F0377DDF6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = VDG762YNX9;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.9;
+				WATCHOS_DEPLOYMENT_TARGET = 10.0;
+			};
+			name = Release;
+		};
+		BED9D6C685817F45A4E1C594 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "beeWatch Watch App/Complications/Info.plist";
+				INFOPLIST_GENERATION_MODE = GeneratedFile;
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.beewatch.ios;
+				INFOPLIST_KEY_WKRunsIndependentlyOfCompanionApp = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.beewatch.ios.watchkitapp;
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 4;
+			};
+			name = Debug;
+		};
+		F318B3EECD6EF781AF07CBAC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_GENERATION_MODE = GeneratedFile;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.beewatch.ios;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		01B560BDBBD69737BF589A25 /* Build configuration list for PBXNativeTarget "beeWatch" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				00A764F710E81A5F56908AC3 /* Debug */,
+				F318B3EECD6EF781AF07CBAC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		05B2A7C03722FD74FAEAD437 /* Build configuration list for PBXProject "beeWatch" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9009356BC8F18D68F81D6E3D /* Debug */,
+				B1D58FE51EB8368F0377DDF6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		2A84173B0CBB9E6A64044877 /* Build configuration list for PBXNativeTarget "beeWatch Watch App" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BED9D6C685817F45A4E1C594 /* Debug */,
+				7CAF3897D156C1206C6D5DF6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		EB677B98245B66B51FC472DE /* Build configuration list for PBXNativeTarget "beeWatch Watch App Complications" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				720246669D6950CA44B58228 /* Debug */,
+				A88608C8500F773C38FBB0B3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = EDE6207A5B2EF16721009DF9 /* Project object */;
+}

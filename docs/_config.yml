@@ -1,0 +1,9 @@
+title: BeeWatch
+description: Beeminder for Apple Watch - Track your goals from your wrist
+url: "https://giovanni.github.io"
+baseurl: "/beeWatch"
+theme: null
+
+# GitHub Pages settings
+plugins:
+  - jekyll-seo-tag
