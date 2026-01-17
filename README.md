@@ -16,12 +16,33 @@ An Apple Watch app for tracking and entering data into your Beeminder goals.
 
 - iOS 17.0+
 - watchOS 10.0+
+- Beeminder account and API key
+
+**For building from source:**
 - Xcode 15.0+
 - [XcodeGen](https://github.com/yonaskolb/XcodeGen) (for project generation)
 
 ## Setup
 
-### Option A: Using XcodeGen (Recommended)
+### Option A: TestFlight (Easiest - For End Users)
+
+If you've been invited to test BeeWatch via TestFlight:
+
+1. **Install TestFlight** (if you don't have it):
+   - Download [TestFlight](https://apps.apple.com/app/testflight/id899247664) from the App Store
+
+2. **Accept the Invitation**:
+   - Check your email for a TestFlight invitation from the developer
+   - Tap the invitation link, or open TestFlight and accept the invitation
+
+3. **Install BeeWatch**:
+   - In TestFlight, tap **Install** next to BeeWatch
+   - Wait for the app to install on your iPhone and Apple Watch
+   - Open BeeWatch on your Watch to get started
+
+**Note:** TestFlight builds expire after 90 days. You'll receive notifications when updates are available.
+
+### Option B: Using XcodeGen (For Developers)
 
 1. Install XcodeGen:
    ```bash
@@ -39,7 +60,7 @@ An Apple Watch app for tracking and entering data into your Beeminder goals.
    open beeWatch.xcodeproj
    ```
 
-### Option B: Manual Xcode Setup
+### Option C: Manual Xcode Setup
 
 1. **Create New Project in Xcode**:
    - File > New > Project
@@ -81,6 +102,23 @@ An Apple Watch app for tracking and entering data into your Beeminder goals.
 1. Select the "beeWatch Watch App" scheme
 2. Choose a Watch simulator or your connected Apple Watch
 3. Press Cmd+R to build and run
+
+## Distribution
+
+### TestFlight Distribution
+
+To distribute BeeWatch to testers via TestFlight:
+
+1. **Prerequisites**:
+   - Apple Developer account ($99/year)
+   - App created in [App Store Connect](https://appstoreconnect.apple.com)
+
+2. **Quick Steps**:
+   - Archive the app in Xcode (Product → Archive)
+   - Upload to App Store Connect
+   - Configure TestFlight and invite testers
+
+For detailed TestFlight setup instructions, see [TECHNICAL.md](TECHNICAL.md#testflight-distribution).
 
 ## Configuration
 
