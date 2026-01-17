@@ -165,13 +165,33 @@
                     <div class="step-number">2</div>
                     <div class="step-content">
                         <h3>Install BeeWatch</h3>
-                        <p>Build from source using Xcode, or download the latest release from GitHub.</p>
+                        <p>Choose one of the following installation methods:</p>
+                        
+                        <h4>Option A: TestFlight (Recommended)</h4>
+                        <p>If you've been invited to test via TestFlight:</p>
+                        <ol style="margin-left: 1.5em; margin-top: 0.5em;">
+                            <li>Install the <strong>TestFlight</strong> app from the App Store (if you don't have it)</li>
+                            <li>Check your email for a TestFlight invitation from the developer</li>
+                            <li>Tap the invitation link or open TestFlight and accept the invitation</li>
+                            <li>Tap <strong>Install</strong> next to BeeWatch in TestFlight</li>
+                            <li>Wait for the app to install on your iPhone and Apple Watch</li>
+                            <li>Open BeeWatch on your Watch to get started</li>
+                        </ol>
+                        <p style="margin-top: 0.5em; font-size: 0.9em; color: #666;">
+                            <strong>Note:</strong> TestFlight builds expire after 90 days. You'll receive notifications when updates are available.
+                        </p>
+
+                        <h4 style="margin-top: 1.5em;">Option B: Build from Source</h4>
+                        <p>Build from source using Xcode (requires Xcode and a Mac):</p>
                         <code>
                             brew install xcodegen<br>
                             git clone https://github.com/giovannicoppola/beeWatch<br>
                             cd beeWatch && xcodegen generate<br>
                             open beeWatch.xcodeproj
                         </code>
+                        <p style="margin-top: 0.5em; font-size: 0.9em; color: #666;">
+                            Then build and run in Xcode (see <a href="https://github.com/giovannicoppola/beeWatch/blob/main/README.md" target="_blank">README</a> for detailed instructions).
+                        </p>
                     </div>
                 </div>
 

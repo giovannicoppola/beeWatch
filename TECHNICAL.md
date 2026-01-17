@@ -308,6 +308,161 @@ xcodebuild -project beeWatch.xcodeproj \
 xcodebuild clean build ...
 ```
 
+## TestFlight Distribution
+
+### Prerequisites
+
+1. **Apple Developer Account** ($99/year)
+   - Active membership required
+   - Access to App Store Connect
+
+2. **App Store Connect Setup**
+   - Register bundle IDs if not already done
+   - Create app record in App Store Connect
+
+### Step 1: Register Bundle IDs
+
+1. Go to [Apple Developer Portal](https://developer.apple.com/account/resources/identifiers/list)
+2. Click "+" to register new identifiers
+3. Register the following App IDs:
+   - `com.beewatch.ios` (App)
+   - The Watch app and Complications bundle IDs are automatically handled when you create the app in App Store Connect
+
+### Step 2: Create App in App Store Connect
+
+1. Go to [App Store Connect](https://appstoreconnect.apple.com)
+2. Click **My Apps** → **+** → **New App**
+3. Fill in the form:
+   - **Platform**: iOS
+   - **Name**: BeeWatch
+   - **Primary Language**: English
+   - **Bundle ID**: `com.beewatch.ios` (select from dropdown)
+   - **SKU**: `beewatch-001` (any unique identifier)
+   - **User Access**: Full Access
+4. Click **Create**
+
+### Step 3: Configure Signing in Xcode
+
+1. Open `beeWatch.xcodeproj` in Xcode
+2. Select the project in the navigator
+3. For each target (beeWatch, beeWatch Watch App, beeWatch Watch App Complications):
+   - Go to **Signing & Capabilities** tab
+   - Check **Automatically manage signing**
+   - Select your **Team** from the dropdown
+   - Verify bundle identifiers match:
+     - iOS App: `com.beewatch.ios`
+     - Watch App: `com.beewatch.ios.watchkitapp`
+     - Complications: `com.beewatch.ios.watchkitapp.complications`
+
+### Step 4: Build and Archive
+
+1. In Xcode, select **Product** → **Scheme** → **beeWatch Watch App**
+2. Select **Any iOS Device** (or a connected device) as the destination
+   - ⚠️ **Important**: Cannot archive from Simulator
+3. Go to **Product** → **Archive**
+4. Wait for the archive to complete (may take several minutes)
+5. The **Organizer** window will open automatically
+
+### Step 5: Upload to App Store Connect
+
+1. In the Organizer window, select your archive
+2. Click **Distribute App**
+3. Select **App Store Connect** → **Next**
+4. Choose **Upload** → **Next**
+5. Select distribution options:
+   - ✅ **Upload your app's symbols** (recommended for crash reports)
+   - ✅ **Manage Version and Build Number** (if needed)
+6. Review signing options (usually automatic)
+7. Click **Upload**
+8. Wait for upload to complete (progress shown in Organizer)
+
+### Step 6: Process Build in App Store Connect
+
+1. Go to [App Store Connect](https://appstoreconnect.apple.com) → **My Apps** → **BeeWatch**
+2. Navigate to **TestFlight** tab
+3. Wait for processing (10-60 minutes typically)
+   - Status will show "Processing" → "Ready to Test"
+4. If processing fails, check **Activity** tab for details
+
+### Step 7: Configure TestFlight
+
+1. In TestFlight, select your build
+2. Add **Test Information** (required for external testers):
+   - **What to Test**: Describe what testers should focus on
+   - **Description**: Any additional notes
+   - **Feedback Email**: Your email for tester feedback
+3. For **External Testing** (first time):
+   - Click **Submit for Review**
+   - Fill in Beta App Review information
+   - Submit (review typically takes 24-48 hours)
+
+### Step 8: Add Testers
+
+#### Internal Testers (Instant, No Review)
+
+1. Go to **TestFlight** → **Internal Testing**
+2. Click **+** to add testers
+3. Add Apple IDs of team members (up to 100)
+4. Testers receive email invitation immediately
+
+#### External Testers (Requires Review First Time)
+
+1. Go to **TestFlight** → **External Testing**
+2. Create a new group (e.g., "Beta Testers")
+3. Add testers by:
+   - **Email addresses**: Add up to 10,000 testers
+   - **Public Link**: Generate shareable link (up to 10,000 installs)
+4. Select the build to test
+5. If first external build, wait for Beta App Review approval
+
+### Step 9: Update Builds
+
+For subsequent updates:
+
+1. Increment version/build number in `project.yml`:
+   ```yaml
+   MARKETING_VERSION: "1.1"  # User-visible version
+   CURRENT_PROJECT_VERSION: "2"  # Build number
+   ```
+2. Regenerate project: `xcodegen generate`
+3. Repeat Steps 4-5 (Archive and Upload)
+4. New build appears in TestFlight automatically
+5. Add to testing groups as needed
+
+### Troubleshooting
+
+#### "No suitable application records were found"
+- Ensure app is created in App Store Connect
+- Verify bundle ID matches exactly
+
+#### "Invalid Bundle"
+- Check all targets have correct bundle identifiers
+- Ensure Watch app bundle ID includes `.watchkitapp` suffix
+- Verify Complications bundle ID includes `.complications` suffix
+
+#### "Missing Compliance"
+- Go to App Store Connect → App → App Privacy
+- Answer privacy questions (usually "No" for BeeWatch)
+- Export compliance information
+
+#### Build Processing Fails
+- Check **Activity** tab in App Store Connect for error details
+- Common issues: missing icons, invalid entitlements, code signing errors
+
+#### Testers Can't Install
+- Ensure they have TestFlight app installed
+- Check they accepted the invitation email
+- Verify build is "Ready to Test" status
+- For external testers, ensure Beta App Review is approved
+
+### Notes
+
+- **Watch Apps**: Must be distributed with companion iOS app (cannot be standalone)
+- **Processing Time**: First build takes longer (30-60 min), subsequent builds faster (10-20 min)
+- **Build Expiration**: TestFlight builds expire after 90 days
+- **Version Requirements**: Each new version must increment build number
+- **Internal vs External**: Internal testers can test immediately, external requires review (first time only)
+
 ### Simulator Commands
 
 ```bash
