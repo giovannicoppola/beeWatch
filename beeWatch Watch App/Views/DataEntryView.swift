@@ -1,13 +1,17 @@
 import SwiftUI
 
 struct DataEntryView: View {
-    let goal: Goal
+    let goalSlug: String
+
+    private var goal: Goal? {
+        dataStore.goals.first { $0.slug == goalSlug }
+    }
 
     @Environment(\.dismiss) private var dismiss
     @StateObject private var dataStore = DataStore.shared
 
     @State private var valueString = ""
-    @State private var comment = ""
+    @State private var comment = UserSettings.shared.defaultComment
     @State private var isSubmitting = false
     @State private var showError = false
     @State private var errorMessage = ""
@@ -42,7 +46,7 @@ struct DataEntryView: View {
 
     private var valueSection: some View {
         VStack(spacing: 4) {
-            Text(goal.title)
+            Text(goal?.title ?? goalSlug)
                 .font(.caption)
                 .foregroundColor(.secondary)
 
@@ -85,7 +89,7 @@ struct DataEntryView: View {
     }
 
     private var commentSection: some View {
-        TextField("Comment (optional)", text: $comment)
+        TextField("Comment", text: $comment)
             .textFieldStyle(.plain)
             .padding(8)
             .background(Color.gray.opacity(0.2))
@@ -144,7 +148,7 @@ struct DataEntryView: View {
         Task {
             do {
                 _ = try await dataStore.submitDatapoint(
-                    goalSlug: goal.slug,
+                    goalSlug: goalSlug,
                     value: value,
                     comment: comment
                 )
@@ -177,11 +181,5 @@ struct NumberButton: View {
 }
 
 #Preview {
-    DataEntryView(goal: Goal(
-        slug: "exercise",
-        title: "Exercise",
-        rate: 30,
-        safebuf: 2,
-        losedate: Date().adding(days: 2)
-    ))
+    DataEntryView(goalSlug: "exercise")
 }

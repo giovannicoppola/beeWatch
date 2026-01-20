@@ -43,11 +43,13 @@ final class DataStore: ObservableObject {
         return responses.map { $0.toDatapoint(goalSlug: goalSlug) }
     }
 
-    func submitDatapoint(goalSlug: String, value: Double, comment: String = "") async throws -> Datapoint {
+    func submitDatapoint(goalSlug: String, value: Double, comment: String? = nil) async throws -> Datapoint {
+        // Use the provided comment, or fall back to the default comment from settings
+        let finalComment = comment ?? UserSettings.shared.defaultComment
         let response = try await BeeminderAPI.shared.createDatapoint(
             goalSlug: goalSlug,
             value: value,
-            comment: comment
+            comment: finalComment
         )
 
         recordFrequentValue(goalSlug: goalSlug, value: value)

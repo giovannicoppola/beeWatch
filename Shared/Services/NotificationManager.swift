@@ -82,6 +82,7 @@ final class NotificationManager: ObservableObject {
         content.body = "Don't forget to log your progress!"
         content.sound = .default
         content.categoryIdentifier = "GOAL_REMINDER"
+        content.userInfo = ["goalSlug": setting.goalSlug]
 
         var dateComponents = DateComponents()
         dateComponents.hour = setting.reminderHour
@@ -112,6 +113,7 @@ final class NotificationManager: ObservableObject {
         content.sound = .defaultCritical
         content.categoryIdentifier = "GOAL_URGENT"
         content.interruptionLevel = .timeSensitive
+        content.userInfo = ["goalSlug": goal.slug]
 
         let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
 
@@ -121,6 +123,29 @@ final class NotificationManager: ObservableObject {
             try await center.add(request)
         } catch {
             print("Failed to schedule urgent notification: \(error)")
+        }
+    }
+
+    func showConfirmationNotification(goalSlug: String, value: Double) async {
+        guard isAuthorized else { return }
+
+        let center = UNUserNotificationCenter.current()
+        let identifier = "confirmation-\(UUID().uuidString)"
+
+        let content = UNMutableNotificationContent()
+        let valueStr = value.truncatingRemainder(dividingBy: 1) == 0 ? String(Int(value)) : String(format: "%.1f", value)
+        content.title = "Logged!"
+        content.body = "\(valueStr) added to \(goalSlug)"
+        content.sound = .default
+
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 0.5, repeats: false)
+
+        let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
+
+        do {
+            try await center.add(request)
+        } catch {
+            print("Failed to show confirmation notification: \(error)")
         }
     }
 

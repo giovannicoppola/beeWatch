@@ -1,5 +1,4 @@
 import Foundation
-import Security
 
 @Observable
 final class UserSettings {
@@ -7,16 +6,22 @@ final class UserSettings {
 
     private let apiKeyKey = "com.beewatch.apikey"
     private let usernameKey = "com.beewatch.username"
+    private let defaultCommentKey = "com.beewatch.defaultComment"
+
+    // Use App Group shared container for data sharing with complications
+    private let sharedDefaults = UserDefaults(suiteName: "group.com.beewatch") ?? UserDefaults.standard
 
     // Stored properties for @Observable to track
     private var _apiKey: String = ""
     private var _username: String = "me"
+    private var _defaultComment: String = "from my Apple Watch"
 
     var apiKey: String {
         get { _apiKey }
         set {
             _apiKey = newValue
-            saveToKeychain(value: newValue, for: apiKeyKey)
+            // Save to shared UserDefaults (accessible by complications)
+            sharedDefaults.set(newValue, forKey: apiKeyKey)
         }
     }
 
@@ -24,7 +29,15 @@ final class UserSettings {
         get { _username }
         set {
             _username = newValue
-            UserDefaults.standard.set(newValue, forKey: usernameKey)
+            sharedDefaults.set(newValue, forKey: usernameKey)
+        }
+    }
+
+    var defaultComment: String {
+        get { _defaultComment }
+        set {
+            _defaultComment = newValue
+            sharedDefaults.set(newValue, forKey: defaultCommentKey)
         }
     }
 
@@ -33,51 +46,21 @@ final class UserSettings {
     }
 
     private init() {
-        // Load saved values on init
-        _apiKey = loadFromKeychain(for: apiKeyKey) ?? ""
-        _username = UserDefaults.standard.string(forKey: usernameKey) ?? "me"
+        // Load saved values from shared UserDefaults
+        _apiKey = sharedDefaults.string(forKey: apiKeyKey) ?? ""
+        _username = sharedDefaults.string(forKey: usernameKey) ?? "me"
+        _defaultComment = sharedDefaults.string(forKey: defaultCommentKey) ?? "from my Apple Watch"
     }
 
-    private func saveToKeychain(value: String, for key: String) {
-        guard let data = value.data(using: .utf8) else { return }
-
-        let query: [String: Any] = [
-            kSecClass as String: kSecClassGenericPassword,
-            kSecAttrAccount as String: key,
-            kSecAttrAccessible as String: kSecAttrAccessibleAfterFirstUnlock
-        ]
-
-        SecItemDelete(query as CFDictionary)
-
-        if !value.isEmpty {
-            var newQuery = query
-            newQuery[kSecValueData as String] = data
-            SecItemAdd(newQuery as CFDictionary, nil)
-        }
-    }
-
-    private func loadFromKeychain(for key: String) -> String? {
-        let query: [String: Any] = [
-            kSecClass as String: kSecClassGenericPassword,
-            kSecAttrAccount as String: key,
-            kSecReturnData as String: true,
-            kSecMatchLimit as String: kSecMatchLimitOne
-        ]
-
-        var result: AnyObject?
-        let status = SecItemCopyMatching(query as CFDictionary, &result)
-
-        guard status == errSecSuccess,
-              let data = result as? Data,
-              let value = String(data: data, encoding: .utf8) else {
-            return nil
-        }
-
-        return value
+    func reloadSettings() {
+        _apiKey = sharedDefaults.string(forKey: apiKeyKey) ?? ""
+        _username = sharedDefaults.string(forKey: usernameKey) ?? "me"
+        _defaultComment = sharedDefaults.string(forKey: defaultCommentKey) ?? "from my Apple Watch"
     }
 
     func clearAll() {
         apiKey = ""
         username = "me"
+        defaultComment = "from my Apple Watch"
     }
 }

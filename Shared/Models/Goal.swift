@@ -2,7 +2,19 @@ import Foundation
 import SwiftData
 
 @Model
-final class Goal: Identifiable {
+final class Goal: Identifiable, Hashable {
+    static func == (lhs: Goal, rhs: Goal) -> Bool {
+        lhs.slug == rhs.slug &&
+        lhs.safebuf == rhs.safebuf &&
+        lhs.losedate == rhs.losedate &&
+        lhs.baremin == rhs.baremin
+    }
+
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(slug)
+        hasher.combine(safebuf)
+        hasher.combine(losedate)
+    }
     @Attribute(.unique) var slug: String
     var title: String
     var goalType: String
@@ -33,6 +45,10 @@ final class Goal: Identifiable {
         self.losedate = losedate
         self.lastUpdated = Date()
         self.yaw = yaw
+    }
+
+    var isDerailed: Bool {
+        losedate.timeIntervalSince(Date()) <= 0
     }
 
     var urgencyColor: UrgencyLevel {

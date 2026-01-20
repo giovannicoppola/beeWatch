@@ -18,11 +18,7 @@ targets:
     platform: iOS
     sources:
       - path: beeWatch
-        excludes:
-          - "**/*.xcassets/**"
       - path: Shared
-    resources:
-      - path: beeWatch/Assets.xcassets
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.beewatch.ios
@@ -35,6 +31,8 @@ targets:
         INFOPLIST_KEY_UILaunchScreen_Generation: YES
         INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone: "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+    entitlements:
+      path: beeWatch/beeWatch.entitlements
     dependencies:
       - target: beeWatch Watch App
         embed: true
@@ -46,23 +44,32 @@ targets:
     sources:
       - path: beeWatch Watch App
         excludes:
-          - "**/*.xcassets/**"
           - "Complications/**"
       - path: Shared
-    resources:
-      - path: beeWatch Watch App/Assets.xcassets
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.beewatch.ios.watchkitapp
-        INFOPLIST_GENERATION_MODE: GeneratedFile
         MARKETING_VERSION: "1.0"
         CURRENT_PROJECT_VERSION: "1"
-        GENERATE_INFOPLIST_FILE: YES
-        INFOPLIST_KEY_WKCompanionAppBundleIdentifier: com.beewatch.ios
-        INFOPLIST_KEY_WKRunsIndependentlyOfCompanionApp: YES
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+    info:
+      path: beeWatch Watch App/Info.plist
+      properties:
+        WKApplication: true
+        WKCompanionAppBundleIdentifier: com.beewatch.ios
+        CFBundleURLTypes:
+          - CFBundleURLName: com.beewatch
+            CFBundleURLSchemes:
+              - beewatch
+    entitlements:
+      path: beeWatch Watch App/beeWatch Watch App.entitlements
+      properties:
+        com.apple.security.application-groups:
+          - group.com.beewatch
     dependencies:
       - target: beeWatch Watch App Complications
+        embed: true
+        codeSign: true
 
   beeWatch Watch App Complications:
     type: app-extension
@@ -73,7 +80,7 @@ targets:
     info:
       path: beeWatch Watch App/Complications/Info.plist
       properties:
-        CFBundleDisplayName: BeeWatch Complications
+        CFBundleDisplayName: BeeWatch
         NSExtension:
           NSExtensionPointIdentifier: com.apple.widgetkit-extension
     settings:
@@ -81,9 +88,12 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: com.beewatch.ios.watchkitapp.complications
         MARKETING_VERSION: "1.0"
         CURRENT_PROJECT_VERSION: "1"
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME: AccentColor
         SKIP_INSTALL: YES
         LD_RUNPATH_SEARCH_PATHS: "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks"
     entitlements:
       path: beeWatch Watch App/Complications/Complications.entitlements
-      properties: {}
+      properties:
+        com.apple.security.application-groups:
+          - group.com.beewatch

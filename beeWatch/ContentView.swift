@@ -3,6 +3,7 @@ import SwiftUI
 struct ContentView: View {
     @State private var apiKey: String = ""
     @State private var username: String = ""
+    @State private var defaultComment: String = ""
     @State private var isTesting = false
     @State private var testResult: TestResult?
     @State private var showingClearConfirmation = false
@@ -49,6 +50,15 @@ struct ContentView: View {
                     Text("Beeminder Account")
                 } footer: {
                     Text("Leave username blank to use 'me' (recommended)")
+                }
+
+                Section {
+                    TextField("Default comment", text: $defaultComment)
+                        .autocorrectionDisabled()
+                } header: {
+                    Text("Watch Data Entry")
+                } footer: {
+                    Text("This comment will be added to data entries from the Watch. You can still edit it before submitting.")
                 }
 
                 Section {
@@ -123,6 +133,7 @@ struct ContentView: View {
             .onAppear {
                 apiKey = settings.apiKey
                 username = settings.username == "me" ? "" : settings.username
+                defaultComment = settings.defaultComment
             }
             .confirmationDialog(
                 "Clear Settings",
@@ -133,6 +144,7 @@ struct ContentView: View {
                     settings.clearAll()
                     apiKey = ""
                     username = ""
+                    defaultComment = "from my Apple Watch"
                     testResult = nil
                 }
                 Button("Cancel", role: .cancel) {}
@@ -165,6 +177,10 @@ struct ContentView: View {
     private func saveSettings() {
         settings.apiKey = apiKey
         settings.username = username.isEmpty ? "me" : username
+        settings.defaultComment = defaultComment
+
+        // Sync to Watch
+        WatchConnectivityManager.shared.sendSettingsToWatch()
     }
 
     private func testConnection() {

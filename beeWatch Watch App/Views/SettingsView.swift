@@ -2,24 +2,23 @@ import SwiftUI
 
 struct SettingsView: View {
     @Environment(\.dismiss) private var dismiss
-    @State private var apiKey: String = ""
-    @State private var username: String = ""
+    @StateObject private var connectivityManager = WatchConnectivityManager.shared
     @State private var showingClearConfirmation = false
-    @State private var isTesting = false
-    @State private var testResult: TestResult?
+    @State private var isSyncing = false
 
     private let settings = UserSettings.shared
 
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(spacing: 20) {
-                    apiKeySection
-                    usernameSection
-                    testSection
-                    helpSection
+                VStack(spacing: 16) {
+                    statusSection
+                    syncSection
                     if settings.isConfigured {
+                        connectionInfoSection
                         clearSection
+                    } else {
+                        instructionsSection
                     }
                 }
                 .padding()
@@ -29,14 +28,9 @@ struct SettingsView: View {
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Done") {
-                        saveSettings()
                         dismiss()
                     }
                 }
-            }
-            .onAppear {
-                apiKey = settings.apiKey
-                username = settings.username
             }
             .confirmationDialog(
                 "Clear Settings",
@@ -45,9 +39,6 @@ struct SettingsView: View {
             ) {
                 Button("Clear All", role: .destructive) {
                     settings.clearAll()
-                    apiKey = ""
-                    username = ""
-                    testResult = nil
                 }
                 Button("Cancel", role: .cancel) {}
             } message: {
@@ -56,88 +47,124 @@ struct SettingsView: View {
         }
     }
 
-    private var apiKeySection: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("API Key")
-                .font(.caption)
-                .foregroundColor(.secondary)
-
-            SecureField("Enter API key", text: $apiKey)
-                .textFieldStyle(.plain)
-                .padding(10)
-                .background(Color.gray.opacity(0.2))
-                .cornerRadius(8)
-                .textInputAutocapitalization(.never)
-                .autocorrectionDisabled()
+    private var statusSection: some View {
+        VStack(spacing: 8) {
+            if settings.isConfigured {
+                HStack {
+                    Image(systemName: "checkmark.circle.fill")
+                        .foregroundColor(.green)
+                        .font(.title2)
+                    VStack(alignment: .leading) {
+                        Text("Connected")
+                            .font(.headline)
+                        Text("User: \(settings.username)")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                    Spacer()
+                }
+            } else {
+                HStack {
+                    Image(systemName: "exclamationmark.triangle.fill")
+                        .foregroundColor(.orange)
+                        .font(.title2)
+                    VStack(alignment: .leading) {
+                        Text("Not Configured")
+                            .font(.headline)
+                        Text("Set up on iPhone")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                    Spacer()
+                }
+            }
         }
+        .padding()
+        .background(Color.gray.opacity(0.2))
+        .cornerRadius(12)
     }
 
-    private var usernameSection: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("Username (optional)")
-                .font(.caption)
-                .foregroundColor(.secondary)
-
-            TextField("me", text: $username)
-                .textFieldStyle(.plain)
-                .padding(10)
-                .background(Color.gray.opacity(0.2))
-                .cornerRadius(8)
-                .textInputAutocapitalization(.never)
-                .autocorrectionDisabled()
-
-            Text("Leave blank to use 'me'")
-                .font(.caption2)
-                .foregroundColor(.secondary)
-        }
-    }
-
-    private var testSection: some View {
+    private var syncSection: some View {
         VStack(spacing: 8) {
             Button {
-                testConnection()
+                syncFromPhone()
             } label: {
-                if isTesting {
+                if isSyncing {
                     ProgressView()
                         .frame(maxWidth: .infinity)
                 } else {
-                    Label("Test Connection", systemImage: "network")
+                    Label("Sync from iPhone", systemImage: "arrow.triangle.2.circlepath")
                         .frame(maxWidth: .infinity)
                 }
             }
-            .buttonStyle(.bordered)
-            .disabled(apiKey.isEmpty || isTesting)
+            .buttonStyle(.borderedProminent)
+            .disabled(isSyncing)
 
-            if let result = testResult {
-                HStack {
-                    Image(systemName: result.success ? "checkmark.circle.fill" : "xmark.circle.fill")
-                        .foregroundColor(result.success ? .green : .red)
-                    Text(result.message)
-                        .font(.caption)
-                }
+            HStack {
+                Circle()
+                    .fill(connectivityManager.isReachable ? Color.green : Color.red)
+                    .frame(width: 8, height: 8)
+                Text(connectivityManager.isReachable ? "iPhone reachable" : "iPhone not reachable")
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
             }
         }
     }
 
-    private var helpSection: some View {
+    private var instructionsSection: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("How to get your API key:")
+            Text("Setup Instructions")
                 .font(.caption)
                 .foregroundColor(.secondary)
 
-            Text("1. Go to beeminder.com/settings/account")
-                .font(.caption2)
-
-            Text("2. Find 'Auth Token' section")
-                .font(.caption2)
-
-            Text("3. Copy and paste the token here")
-                .font(.caption2)
+            VStack(alignment: .leading, spacing: 6) {
+                Label("Open beeWatch on iPhone", systemImage: "1.circle.fill")
+                    .font(.caption2)
+                Label("Enter your Beeminder API key", systemImage: "2.circle.fill")
+                    .font(.caption2)
+                Label("Tap 'Save Settings'", systemImage: "3.circle.fill")
+                    .font(.caption2)
+                Label("Tap 'Sync from iPhone' here", systemImage: "4.circle.fill")
+                    .font(.caption2)
+            }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding()
         .background(Color.blue.opacity(0.1))
         .cornerRadius(8)
+    }
+
+    private var connectionInfoSection: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text("API Key")
+                .font(.caption)
+                .foregroundColor(.secondary)
+            Text(maskedApiKey)
+                .font(.caption2)
+                .foregroundColor(.secondary)
+
+            if !settings.defaultComment.isEmpty {
+                Text("Default Comment")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    .padding(.top, 8)
+                Text(settings.defaultComment)
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding()
+        .background(Color.gray.opacity(0.2))
+        .cornerRadius(8)
+    }
+
+    private var maskedApiKey: String {
+        let key = settings.apiKey
+        if key.count > 8 {
+            return String(key.prefix(4)) + "..." + String(key.suffix(4))
+        }
+        return "****"
     }
 
     private var clearSection: some View {
@@ -151,43 +178,16 @@ struct SettingsView: View {
         .tint(.red)
     }
 
-    private func saveSettings() {
-        settings.apiKey = apiKey
-        settings.username = username.isEmpty ? "me" : username
-    }
+    private func syncFromPhone() {
+        isSyncing = true
+        connectivityManager.requestSettingsFromPhone()
 
-    private func testConnection() {
-        saveSettings()
-        isTesting = true
-        testResult = nil
-
-        Task {
-            do {
-                let goals = try await BeeminderAPI.shared.fetchGoals()
-                await MainActor.run {
-                    testResult = TestResult(
-                        success: true,
-                        message: "Connected! Found \(goals.count) goals."
-                    )
-                }
-            } catch {
-                await MainActor.run {
-                    testResult = TestResult(
-                        success: false,
-                        message: error.localizedDescription
-                    )
-                }
-            }
-            await MainActor.run {
-                isTesting = false
-            }
+        // Give it a moment to receive the settings
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+            isSyncing = false
+            settings.reloadSettings()
         }
     }
-}
-
-struct TestResult {
-    let success: Bool
-    let message: String
 }
 
 #Preview {

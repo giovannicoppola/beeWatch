@@ -1,52 +1,76 @@
 import SwiftUI
 
 struct GoalDetailView: View {
-    let goal: Goal
+    let goalSlug: String
 
+    // Look up the current goal from the store to get latest data
+    private var goal: Goal? {
+        dataStore.goals.first { $0.slug == goalSlug }
+    }
+
+    @Environment(\.dismiss) private var dismiss
     @StateObject private var dataStore = DataStore.shared
     @State private var datapoints: [Datapoint] = []
     @State private var isLoading = true
     @State private var showingDataEntry = false
     @State private var showingReminders = false
+    @State private var showingSuccess = false
+
+    // Init that takes a Goal for backwards compatibility
+    init(goal: Goal) {
+        self.goalSlug = goal.slug
+    }
 
     var body: some View {
-        ScrollView {
-            VStack(spacing: 16) {
-                headerSection
-                quickEntrySection
-                recentEntriesSection
-            }
-            .padding(.horizontal)
-        }
-        .navigationTitle(goal.title)
-        .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                Button {
-                    showingReminders = true
-                } label: {
-                    Image(systemName: "bell")
+        Group {
+            if let goal = goal {
+                ZStack {
+                    ScrollView {
+                        VStack(spacing: 16) {
+                            headerSection(goal)
+                            quickEntrySection(goal)
+                            recentEntriesSection
+                        }
+                        .padding(.horizontal)
+                    }
+
+                    if showingSuccess {
+                        successOverlay
+                    }
                 }
+                .navigationTitle(goal.title)
+                .toolbar {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button {
+                            showingReminders = true
+                        } label: {
+                            Image(systemName: "bell")
+                        }
+                    }
+                }
+                .sheet(isPresented: $showingDataEntry) {
+                    DataEntryView(goalSlug: goalSlug)
+                }
+                .sheet(isPresented: $showingReminders) {
+                    ReminderSettingsView(goalSlug: goalSlug)
+                }
+            } else {
+                ProgressView("Loading...")
             }
-        }
-        .sheet(isPresented: $showingDataEntry) {
-            DataEntryView(goal: goal)
-        }
-        .sheet(isPresented: $showingReminders) {
-            ReminderSettingsView(goalSlug: goal.slug)
         }
         .task {
             await loadDatapoints()
         }
     }
 
-    private var headerSection: some View {
+    private func headerSection(_ goal: Goal) -> some View {
         VStack(spacing: 8) {
             HStack {
-                urgencyBadge
+                urgencyBadge(goal)
                 Spacer()
                 Text(goal.timeRemaining)
                     .font(.headline)
-                    .foregroundColor(urgencyColor)
+                    .foregroundColor(urgencyColor(goal))
             }
 
             if let baremin = goal.baremin, !baremin.isEmpty {
@@ -72,13 +96,13 @@ struct GoalDetailView: View {
         .cornerRadius(12)
     }
 
-    private var quickEntrySection: some View {
+    private func quickEntrySection(_ goal: Goal) -> some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("Quick Entry")
                 .font(.caption)
                 .foregroundColor(.secondary)
 
-            let frequentValues = dataStore.getFrequentValues(for: goal.slug)
+            let frequentValues = dataStore.getFrequentValues(for: goalSlug)
 
             if frequentValues.isEmpty {
                 defaultQuickEntryButtons
@@ -99,7 +123,7 @@ struct GoalDetailView: View {
     private var defaultQuickEntryButtons: some View {
         HStack(spacing: 8) {
             ForEach([1, 5, 10], id: \.self) { value in
-                QuickEntryButton(value: Double(value), goalSlug: goal.slug)
+                QuickEntryButton(value: Double(value), goalSlug: goalSlug, onSuccess: handleEntrySuccess)
             }
         }
     }
@@ -107,8 +131,31 @@ struct GoalDetailView: View {
     private func frequentValuesButtons(_ values: [FrequentValue]) -> some View {
         HStack(spacing: 8) {
             ForEach(values) { frequentValue in
-                QuickEntryButton(value: frequentValue.value, goalSlug: goal.slug)
+                QuickEntryButton(value: frequentValue.value, goalSlug: goalSlug, onSuccess: handleEntrySuccess)
             }
+        }
+    }
+
+    private var successOverlay: some View {
+        VStack(spacing: 12) {
+            Image(systemName: "checkmark.circle.fill")
+                .font(.system(size: 50))
+                .foregroundColor(.green)
+            Text("Logged!")
+                .font(.headline)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(.ultraThinMaterial)
+    }
+
+    private func handleEntrySuccess() {
+        showingSuccess = true
+        Task {
+            try? await Task.sleep(nanoseconds: 800_000_000)
+            await MainActor.run {
+                dismiss()
+            }
+            await dataStore.refreshGoals()
         }
     }
 
@@ -134,17 +181,17 @@ struct GoalDetailView: View {
         }
     }
 
-    private var urgencyBadge: some View {
+    private func urgencyBadge(_ goal: Goal) -> some View {
         Text("\(goal.safebuf)d safe")
             .font(.caption2)
             .padding(.horizontal, 8)
             .padding(.vertical, 4)
-            .background(urgencyColor.opacity(0.2))
-            .foregroundColor(urgencyColor)
+            .background(urgencyColor(goal).opacity(0.2))
+            .foregroundColor(urgencyColor(goal))
             .cornerRadius(8)
     }
 
-    private var urgencyColor: Color {
+    private func urgencyColor(_ goal: Goal) -> Color {
         switch goal.urgencyColor {
         case .red: return .red
         case .orange: return .orange
@@ -156,7 +203,7 @@ struct GoalDetailView: View {
     private func loadDatapoints() async {
         isLoading = true
         do {
-            datapoints = try await dataStore.fetchDatapoints(for: goal.slug)
+            datapoints = try await dataStore.fetchDatapoints(for: goalSlug)
         } catch {
             print("Failed to load datapoints: \(error)")
         }
@@ -171,7 +218,6 @@ struct QuickEntryButton: View {
 
     @StateObject private var dataStore = DataStore.shared
     @State private var isSubmitting = false
-    @State private var showSuccess = false
     @State private var showConfirmation = false
 
     var body: some View {
@@ -180,10 +226,6 @@ struct QuickEntryButton: View {
         } label: {
             if isSubmitting {
                 ProgressView()
-                    .frame(maxWidth: .infinity)
-            } else if showSuccess {
-                Image(systemName: "checkmark")
-                    .foregroundColor(.green)
                     .frame(maxWidth: .infinity)
             } else {
                 Text(formattedValue)
@@ -215,14 +257,16 @@ struct QuickEntryButton: View {
         Task {
             do {
                 _ = try await dataStore.submitDatapoint(goalSlug: goalSlug, value: value)
-                showSuccess = true
-
-                try? await Task.sleep(nanoseconds: 1_500_000_000)
-                showSuccess = false
+                await MainActor.run {
+                    isSubmitting = false
+                    onSuccess?()
+                }
             } catch {
                 print("Failed to submit: \(error)")
+                await MainActor.run {
+                    isSubmitting = false
+                }
             }
-            isSubmitting = false
         }
     }
 }

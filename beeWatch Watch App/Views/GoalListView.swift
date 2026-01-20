@@ -1,13 +1,20 @@
 import SwiftUI
+import WidgetKit
 
 struct GoalListView: View {
     @StateObject private var dataStore = DataStore.shared
     @State private var showingSettings = false
+    @State private var navigationPath = NavigationPath()
+    @Binding var deepLinkGoalSlug: String?
 
     private var settings: UserSettings { UserSettings.shared }
 
+    init(deepLinkGoalSlug: Binding<String?> = .constant(nil)) {
+        _deepLinkGoalSlug = deepLinkGoalSlug
+    }
+
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $navigationPath) {
             Group {
                 if !settings.isConfigured {
                     notConfiguredView
@@ -22,33 +29,79 @@ struct GoalListView: View {
                 }
             }
             .navigationTitle("beeWatch 🐝")
+            .navigationDestination(for: Goal.self) { goal in
+                GoalDetailView(goal: goal)
+            }
             .sheet(isPresented: $showingSettings, onDismiss: {
                 if settings.isConfigured {
                     Task {
                         await dataStore.refreshGoals()
+                        // Refresh complications after settings change
+                        WidgetCenter.shared.reloadAllTimelines()
                     }
                 }
             }) {
                 SettingsView()
             }
-            .refreshable {
-                await dataStore.refreshGoals()
-            }
         }
         .task {
             if settings.isConfigured {
                 await dataStore.refreshGoals()
+                // Refresh complications when goals are loaded
+                WidgetCenter.shared.reloadAllTimelines()
             }
+        }
+        .onChange(of: deepLinkGoalSlug) { _, newSlug in
+            if let slug = newSlug, let goal = dataStore.goals.first(where: { $0.slug == slug }) {
+                navigationPath.append(goal)
+                deepLinkGoalSlug = nil
+            }
+        }
+        .onOpenURL { url in
+            handleDeepLink(url)
+        }
+    }
+
+    private func handleDeepLink(_ url: URL) {
+        // Handle URLs like beewatch://goal/exercise
+        guard url.scheme == "beewatch",
+              url.host == "goal",
+              let goalSlug = url.pathComponents.dropFirst().first else {
+            return
+        }
+
+        // If goals are loaded, navigate immediately
+        if let goal = dataStore.goals.first(where: { $0.slug == goalSlug }) {
+            navigationPath.append(goal)
+        } else {
+            // Store for later when goals load
+            deepLinkGoalSlug = goalSlug
         }
     }
 
     private var goalsList: some View {
         List {
             ForEach(dataStore.goals) { goal in
-                NavigationLink(destination: GoalDetailView(goal: goal)) {
+                NavigationLink(value: goal) {
                     GoalRowView(goal: goal)
                 }
             }
+
+            // Refresh button after goals
+            Button {
+                Task {
+                    await dataStore.refreshGoals()
+                }
+            } label: {
+                HStack {
+                    Image(systemName: "arrow.clockwise")
+                    Text(dataStore.isLoading ? "Refreshing..." : "Refresh")
+                }
+                .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.bordered)
+            .disabled(dataStore.isLoading)
+            .listRowBackground(Color.clear)
 
             Button {
                 showingSettings = true
@@ -63,10 +116,8 @@ struct GoalListView: View {
             .listRowBackground(Color.clear)
         }
         .listStyle(.carousel)
-        .onAppear {
-            Task {
-                await dataStore.refreshGoals()
-            }
+        .refreshable {
+            await dataStore.refreshGoals()
         }
     }
 
@@ -139,7 +190,12 @@ struct GoalRowView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             HStack {
-                urgencyIndicator
+                if goal.isDerailed {
+                    Text("💀")
+                        .font(.caption)
+                } else {
+                    urgencyIndicator
+                }
                 Text(goal.title)
                     .font(.headline)
                     .lineLimit(1)

@@ -36,6 +36,9 @@ actor BeeminderAPI {
         let config = URLSessionConfiguration.default
         config.timeoutIntervalForRequest = 30
         config.timeoutIntervalForResource = 60
+        // Disable caching to always get fresh data
+        config.requestCachePolicy = .reloadIgnoringLocalCacheData
+        config.urlCache = nil
         self.session = URLSession(configuration: config)
     }
 
