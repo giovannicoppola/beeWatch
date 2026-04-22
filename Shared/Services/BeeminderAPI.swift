@@ -104,6 +104,44 @@ actor BeeminderAPI {
         }
     }
 
+    /// Polls the goal endpoint until Beeminder has finished recomputing its stats
+    /// after a datapoint change, or until `timeout` seconds elapse.
+    ///
+    /// Beeminder recomputes `baremin`, `safebuf`, `losedate`, etc. asynchronously
+    /// after a POST to /datapoints.json. Until that job runs, the values returned
+    /// by /goals.json are stale. We consider stats fresh when `queued == false`
+    /// and `updated_at` has advanced past the value we had before the mutation.
+    ///
+    /// Returns the latest goal response if we got one (fresh or stale on timeout),
+    /// or throws if the underlying request fails.
+    func waitForRecompute(
+        slug: String,
+        previousUpdatedAt: Double,
+        timeout: TimeInterval = 8.0,
+        pollInterval: TimeInterval = 0.5
+    ) async throws -> GoalResponse {
+        let deadline = Date().addingTimeInterval(timeout)
+        var latest: GoalResponse?
+
+        while Date() < deadline {
+            let response = try await fetchGoal(slug: slug)
+            latest = response
+            let queued = response.queued ?? false
+            let updatedAt = response.updatedAt ?? 0
+            if !queued && updatedAt > previousUpdatedAt {
+                return response
+            }
+            try? await Task.sleep(nanoseconds: UInt64(pollInterval * 1_000_000_000))
+        }
+
+        // Timed out — return whatever we last saw (may still be stale). Callers
+        // can fall back to optimistic local state if needed.
+        if let latest {
+            return latest
+        }
+        return try await fetchGoal(slug: slug)
+    }
+
     func createDatapoint(goalSlug: String, value: Double, comment: String = "", timestamp: Date? = nil) async throws -> DatapointResponse {
         guard settings.isConfigured else {
             throw APIError.notConfigured
@@ -209,6 +247,14 @@ struct GoalResponse: Codable {
     let yaw: Int?
     let limsum: String?
     let baremin: String?
+    // Stats freshness: when true, Beeminder is still recomputing this goal
+    // and baremin/safebuf/losedate/limsum/etc. are stale. Wait for false.
+    let queued: Bool?
+    let updatedAt: Double?
+    // Numeric amount needed to reach the next safe day (out of red).
+    let safebump: Double?
+    // Human-readable "need" text, e.g. "+1 within 2 days".
+    let deltaText: String?
 
     enum CodingKeys: String, CodingKey {
         case slug, title
@@ -216,7 +262,9 @@ struct GoalResponse: Codable {
         case goaldate, goalval, rate, runits, pledge, safebuf, losedate
         case thumbUrl = "thumb_url"
         case graphUrl = "graph_url"
-        case yaw, limsum, baremin
+        case yaw, limsum, baremin, queued, safebump
+        case updatedAt = "updated_at"
+        case deltaText = "delta_text"
     }
 
     func toGoal() -> Goal {
@@ -237,6 +285,10 @@ struct GoalResponse: Codable {
         goal.graphUrl = graphUrl
         goal.limsum = limsum
         goal.baremin = baremin
+        goal.queued = queued ?? false
+        goal.updatedAt = updatedAt ?? 0
+        goal.safebump = safebump
+        goal.deltaText = deltaText
         return goal
     }
 }

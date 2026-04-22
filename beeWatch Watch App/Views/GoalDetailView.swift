@@ -68,15 +68,20 @@ struct GoalDetailView: View {
             HStack {
                 urgencyBadge(goal)
                 Spacer()
-                Text(goal.timeRemaining)
-                    .font(.headline)
-                    .foregroundColor(urgencyColor(goal))
+                countdownLabel(goal)
             }
 
-            if let baremin = goal.baremin, !baremin.isEmpty {
-                Text("Need: \(baremin)")
+            if let need = goal.needText {
+                Text("Need: \(need)")
                     .font(.subheadline)
                     .foregroundColor(.secondary)
+                    .multilineTextAlignment(.center)
+            }
+
+            if let bump = goal.safebump, !goal.isDerailed, goal.safebuf <= 1 {
+                Text(String(format: "Enter %@ to be safe today", formatNumber(bump)))
+                    .font(.caption2)
+                    .foregroundColor(.blue)
             }
 
             HStack {
@@ -94,6 +99,30 @@ struct GoalDetailView: View {
         .padding()
         .background(Color.gray.opacity(0.2))
         .cornerRadius(12)
+    }
+
+    @ViewBuilder
+    private func countdownLabel(_ goal: Goal) -> some View {
+        if goal.isDerailed {
+            Text("Derailed!")
+                .font(.headline)
+                .foregroundColor(.red)
+        } else if goal.isOptimisticallyRefreshed || goal.queued {
+            Text("Updating…")
+                .font(.headline)
+                .foregroundColor(.secondary)
+        } else {
+            Text(goal.losedate, style: .relative)
+                .font(.headline)
+                .foregroundColor(urgencyColor(goal))
+        }
+    }
+
+    private func formatNumber(_ value: Double) -> String {
+        if value.truncatingRemainder(dividingBy: 1) == 0 {
+            return String(Int(value))
+        }
+        return String(format: "%.1f", value)
     }
 
     private func quickEntrySection(_ goal: Goal) -> some View {
@@ -149,13 +178,15 @@ struct GoalDetailView: View {
     }
 
     private func handleEntrySuccess() {
+        // submitDatapoint already waited for Beeminder's recompute and
+        // refreshed the goals list, so we just need to briefly show the
+        // success checkmark and then pop back to the list.
         showingSuccess = true
         Task {
             try? await Task.sleep(nanoseconds: 800_000_000)
             await MainActor.run {
                 dismiss()
             }
-            await dataStore.refreshGoals()
         }
     }
 

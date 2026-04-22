@@ -5,13 +5,9 @@ struct GoalListView: View {
     @StateObject private var dataStore = DataStore.shared
     @State private var showingSettings = false
     @State private var navigationPath = NavigationPath()
-    @Binding var deepLinkGoalSlug: String?
+    @State private var deepLinkGoalSlug: String?
 
     private var settings: UserSettings { UserSettings.shared }
-
-    init(deepLinkGoalSlug: Binding<String?> = .constant(nil)) {
-        _deepLinkGoalSlug = deepLinkGoalSlug
-    }
 
     var body: some View {
         NavigationStack(path: $navigationPath) {
@@ -202,16 +198,27 @@ struct GoalRowView: View {
             }
 
             HStack {
-                Text(goal.timeRemaining)
-                    .font(.caption)
-                    .foregroundColor(urgencyColor)
+                if goal.isDerailed {
+                    Text("Derailed!")
+                        .font(.caption)
+                        .foregroundColor(.red)
+                } else if goal.isOptimisticallyRefreshed || goal.queued {
+                    Text("Updating…")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                } else {
+                    Text(goal.losedate, style: .relative)
+                        .font(.caption)
+                        .foregroundColor(urgencyColor)
+                }
 
                 Spacer()
 
-                if let baremin = goal.baremin, !baremin.isEmpty {
-                    Text(baremin)
+                if let need = goal.needText {
+                    Text(need)
                         .font(.caption2)
                         .foregroundColor(.secondary)
+                        .lineLimit(1)
                 }
             }
 
