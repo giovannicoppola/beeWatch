@@ -1,0 +1,31 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:api.beeminder.com)",
+      "WebSearch",
+      "Bash(brew install:*)",
+      "Bash(xcodegen generate:*)",
+      "Bash(/opt/homebrew/bin/xcodegen generate:*)",
+      "Bash(/usr/local/bin/xcodegen generate:*)",
+      "Bash(open:*)",
+      "Bash(xcodebuild:*)",
+      "Bash(xcrun simctl boot:*)",
+      "Bash(xcrun simctl install:*)",
+      "Bash(plutil:*)",
+      "Bash(xcrun simctl launch:*)",
+      "Bash(ls:*)",
+      "Bash(xcrun simctl:*)",
+      "Bash(sips:*)",
+      "Bash(xcrun devicectl list:*)",
+      "Bash(xcrun devicectl device install app:*)",
+      "Bash(cat:*)",
+      "Bash(brew list:*)",
+      "Bash(convert:*)",
+      "Bash(xcrun actool:*)",
+      "Bash(assetutil:*)",
+      "Bash(env -i PATH=/opt/homebrew/bin:/usr/bin:/bin /opt/homebrew/bin/xcodegen generate:*)",
+      "Bash(export PATH=\"/opt/homebrew/bin:$PATH\")",
+      "Bash(magick:*)"
+    ]
+  }
+}

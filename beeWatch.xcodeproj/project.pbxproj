@@ -7,9 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		07EC6231596B36AD5416D0D5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D5873A2273EFE8D9D36DEFB7 /* Assets.xcassets */; };
 		0837E0031E56288E5E609316 /* Goal.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2DF5D91346B6AA2461EE35D /* Goal.swift */; };
-		0C9DFA49E870D3F38E464E99 /* BeeWatchComplications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AAB8CE8184B80449FBF45B6 /* BeeWatchComplications.swift */; };
 		11CE00963540F96F59D62B13 /* Date+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F77D343BDE42195AA9DFC2CA /* Date+Extensions.swift */; };
 		168CD8C1C5A42E926447D12A /* DataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82563CBC1F1FB5194FD90937 /* DataStore.swift */; };
 		2D92599C4796CC36F54BE5F1 /* Datapoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = A735A3190D06327D5A298DF9 /* Datapoint.swift */; };
@@ -23,9 +21,10 @@
 		63D3C6CF160F6AEFD0CD83FC /* beeWatch Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = AD7B578B9765C923BCB7126E /* beeWatch Watch App.app */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		6D188298EFB036216C3A0BF4 /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52623EE145B446781C5C4055 /* NotificationManager.swift */; };
 		6DDEC7487AD58D1B509FED36 /* Datapoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = A735A3190D06327D5A298DF9 /* Datapoint.swift */; };
+		70E221FD7DC7FE43A57D011F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F80E12BC8007F2A5A04BF883 /* Assets.xcassets */; };
 		86F0BA6EAF8567193D8EFE04 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D3CC69E7039FFBADE0DC2B5 /* ContentView.swift */; };
+		8B9ADEA284D06202525F8462 /* ComplicationBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4DB5487C9BCE1FB2B15E93D /* ComplicationBundle.swift */; };
 		8DE7B2835C13F9667E598581 /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52623EE145B446781C5C4055 /* NotificationManager.swift */; };
-		922B3C9F1A3D97F3E3D01291 /* ComplicationBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 331CA6BC0C550BA562D70DF2 /* ComplicationBundle.swift */; };
 		94D4330EDC61430E1873D694 /* DataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82563CBC1F1FB5194FD90937 /* DataStore.swift */; };
 		95F35E169A37770325D6C22A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3D56D6FB9AD244B0F73A5398 /* Assets.xcassets */; };
 		A206887BCF93B169CBB6C3D1 /* Date+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F77D343BDE42195AA9DFC2CA /* Date+Extensions.swift */; };
@@ -43,6 +42,7 @@
 		DB3321D86DCCBE38D26BDCC9 /* UserSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CE6C9626A167FE024955B71 /* UserSettings.swift */; };
 		E8BF54C635CC38E6DE940CE7 /* Goal.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2DF5D91346B6AA2461EE35D /* Goal.swift */; };
 		F1757E3EBD4D2A8FCA293877 /* DataEntryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 890FAB84A9F02ECAF818749B /* DataEntryView.swift */; };
+		F3125C0ADB7D8D451EB0D925 /* BeeWatchComplications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0785BCAEE220E0D1D4E51655 /* BeeWatchComplications.swift */; };
 		F3FDEC22168FA4736095525A /* BeeminderAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 245A8E17D36FA75CD2F7ABFC /* BeeminderAPI.swift */; };
 		F6EE6E0A22294BE47AFD8344 /* beeWatchApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6A0C5B82A9F7A704CA7216E /* beeWatchApp.swift */; };
 		FC4A666768DE02CDD72CCEFF /* UserSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CE6C9626A167FE024955B71 /* UserSettings.swift */; };
@@ -91,20 +91,18 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		0F0B73CD2F2203A1B7E8FC4E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		0785BCAEE220E0D1D4E51655 /* BeeWatchComplications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BeeWatchComplications.swift; sourceTree = "<group>"; };
 		2435B740C8022B034297528C /* GoalListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalListView.swift; sourceTree = "<group>"; };
 		245A8E17D36FA75CD2F7ABFC /* BeeminderAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BeeminderAPI.swift; sourceTree = "<group>"; };
-		331CA6BC0C550BA562D70DF2 /* ComplicationBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComplicationBundle.swift; sourceTree = "<group>"; };
-		3AAB8CE8184B80449FBF45B6 /* BeeWatchComplications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BeeWatchComplications.swift; sourceTree = "<group>"; };
 		3D56D6FB9AD244B0F73A5398 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		45B4E2E98D06F23C0AFA4EAE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		49DCED0EDEB3576DDD884D58 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		52623EE145B446781C5C4055 /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
 		56D04B545DC323095D0BD9C4 /* GoalDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalDetailView.swift; sourceTree = "<group>"; };
 		5C9E24009C04A9DE303ACD8C /* beeWatchApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = beeWatchApp.swift; sourceTree = "<group>"; };
 		5CE6C9626A167FE024955B71 /* UserSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSettings.swift; sourceTree = "<group>"; };
 		61278756595B03A1FBB180F2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		82563CBC1F1FB5194FD90937 /* DataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStore.swift; sourceTree = "<group>"; };
-		8333709677ABC079BE80B26E /* Complications.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Complications.entitlements; sourceTree = "<group>"; };
 		870ECA09998824881D7EE9D0 /* beeWatch.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = beeWatch.entitlements; sourceTree = "<group>"; };
 		890FAB84A9F02ECAF818749B /* DataEntryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataEntryView.swift; sourceTree = "<group>"; };
 		8CE638BFCFF8D09AF9FB1270 /* beeWatch Watch App.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "beeWatch Watch App.entitlements"; sourceTree = "<group>"; };
@@ -115,10 +113,12 @@
 		A735A3190D06327D5A298DF9 /* Datapoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Datapoint.swift; sourceTree = "<group>"; };
 		AD7B578B9765C923BCB7126E /* beeWatch Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "beeWatch Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B6A0C5B82A9F7A704CA7216E /* beeWatchApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = beeWatchApp.swift; sourceTree = "<group>"; };
+		C4DB5487C9BCE1FB2B15E93D /* ComplicationBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComplicationBundle.swift; sourceTree = "<group>"; };
 		C4F54B12D82028F97A8CFDFC /* ReminderSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderSettingsView.swift; sourceTree = "<group>"; };
 		CA6BFB4E62F937624F11C3D5 /* beeWatch Watch App Complications.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "beeWatch Watch App Complications.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
-		D5873A2273EFE8D9D36DEFB7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		F24E97FDF2786C51132749C0 /* Complications.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Complications.entitlements; sourceTree = "<group>"; };
 		F77D343BDE42195AA9DFC2CA /* Date+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Extensions.swift"; sourceTree = "<group>"; };
+		F80E12BC8007F2A5A04BF883 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		FD9C9E0115A8912612A2171B /* WatchConnectivityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchConnectivityManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -192,7 +192,6 @@
 			children = (
 				8FDBE94C7F448C8FA7650B15 /* beeWatch */,
 				B08C755C9264E50FFCDDE315 /* beeWatch Watch App */,
-				B9FEF1C3460BD1332B26544C /* Complications */,
 				2B831EDE56C96025D6466A78 /* Shared */,
 				702F1E9BDF8647336BB8B400 /* Products */,
 			);
@@ -205,22 +204,10 @@
 				8CE638BFCFF8D09AF9FB1270 /* beeWatch Watch App.entitlements */,
 				5C9E24009C04A9DE303ACD8C /* beeWatchApp.swift */,
 				61278756595B03A1FBB180F2 /* Info.plist */,
+				F04095BA04F1C645208FE103 /* Complications */,
 				6CF8BB1FCBC9103DD2B8CB82 /* Views */,
 			);
 			path = "beeWatch Watch App";
-			sourceTree = "<group>";
-		};
-		B9FEF1C3460BD1332B26544C /* Complications */ = {
-			isa = PBXGroup;
-			children = (
-				D5873A2273EFE8D9D36DEFB7 /* Assets.xcassets */,
-				3AAB8CE8184B80449FBF45B6 /* BeeWatchComplications.swift */,
-				331CA6BC0C550BA562D70DF2 /* ComplicationBundle.swift */,
-				8333709677ABC079BE80B26E /* Complications.entitlements */,
-				0F0B73CD2F2203A1B7E8FC4E /* Info.plist */,
-			);
-			name = Complications;
-			path = "beeWatch Watch App/Complications";
 			sourceTree = "<group>";
 		};
 		C61FAC80ACFA160EB9209818 /* Extensions */ = {
@@ -229,6 +216,18 @@
 				F77D343BDE42195AA9DFC2CA /* Date+Extensions.swift */,
 			);
 			path = Extensions;
+			sourceTree = "<group>";
+		};
+		F04095BA04F1C645208FE103 /* Complications */ = {
+			isa = PBXGroup;
+			children = (
+				F80E12BC8007F2A5A04BF883 /* Assets.xcassets */,
+				0785BCAEE220E0D1D4E51655 /* BeeWatchComplications.swift */,
+				C4DB5487C9BCE1FB2B15E93D /* ComplicationBundle.swift */,
+				F24E97FDF2786C51132749C0 /* Complications.entitlements */,
+				49DCED0EDEB3576DDD884D58 /* Info.plist */,
+			);
+			path = Complications;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -341,7 +340,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				07EC6231596B36AD5416D0D5 /* Assets.xcassets in Resources */,
+				70E221FD7DC7FE43A57D011F /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -368,9 +367,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0C9DFA49E870D3F38E464E99 /* BeeWatchComplications.swift in Sources */,
+				F3125C0ADB7D8D451EB0D925 /* BeeWatchComplications.swift in Sources */,
 				38BD0CEED69EB51E8A243435 /* BeeminderAPI.swift in Sources */,
-				922B3C9F1A3D97F3E3D01291 /* ComplicationBundle.swift in Sources */,
+				8B9ADEA284D06202525F8462 /* ComplicationBundle.swift in Sources */,
 				168CD8C1C5A42E926447D12A /* DataStore.swift in Sources */,
 				C5B02F190CB6A9216F63C8EC /* Datapoint.swift in Sources */,
 				11CE00963540F96F59D62B13 /* Date+Extensions.swift in Sources */,
@@ -447,7 +446,8 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -658,7 +658,8 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

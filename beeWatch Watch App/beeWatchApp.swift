@@ -7,7 +7,6 @@ import WatchKit
 struct beeWatch_Watch_App: App {
     @Environment(\.scenePhase) private var scenePhase
     @WKApplicationDelegateAdaptor(NotificationDelegate.self) var notificationDelegate
-    @State private var deepLinkGoalSlug: String?
 
     init() {
         NotificationManager.shared.setupNotificationCategories()
@@ -17,10 +16,7 @@ struct beeWatch_Watch_App: App {
 
     var body: some Scene {
         WindowGroup {
-            GoalListView(deepLinkGoalSlug: $deepLinkGoalSlug)
-                .onOpenURL { url in
-                    handleDeepLink(url)
-                }
+            GoalListView()
         }
         .onChange(of: scenePhase) { _, newPhase in
             if newPhase == .active {
@@ -30,16 +26,6 @@ struct beeWatch_Watch_App: App {
                 WatchConnectivityManager.shared.requestSettingsFromPhone()
             }
         }
-    }
-
-    private func handleDeepLink(_ url: URL) {
-        // Handle URLs like beewatch://goal/exercise
-        guard url.scheme == "beewatch",
-              url.host == "goal",
-              let goalSlug = url.pathComponents.dropFirst().first else {
-            return
-        }
-        deepLinkGoalSlug = goalSlug
     }
 }
 
@@ -71,6 +57,8 @@ class NotificationDelegate: NSObject, WKApplicationDelegate, UNUserNotificationC
         }
 
         if let value = value, !goalSlug.isEmpty {
+            // Must wait for async work to complete before calling completionHandler
+            // Otherwise the app may be suspended before the network request finishes
             Task {
                 do {
                     _ = try await DataStore.shared.submitDatapoint(goalSlug: goalSlug, value: value)
@@ -78,9 +66,10 @@ class NotificationDelegate: NSObject, WKApplicationDelegate, UNUserNotificationC
                 } catch {
                     print("Failed to submit from notification: \(error)")
                 }
+                completionHandler()
             }
+        } else {
+            completionHandler()
         }
-
-        completionHandler()
     }
 }

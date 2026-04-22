@@ -6,7 +6,9 @@ struct BeeWatchComplicationBundle: WidgetBundle {
     var body: some Widget {
         // App launcher
         AppLauncherComplication()
-        // Goals by urgency (1-5)
+        // Most urgent goal (dynamic - always shows closest to derailing)
+        MostUrgentComplication()
+        // Goals by position (1-5)
         Goal1Complication()
         Goal2Complication()
         Goal3Complication()

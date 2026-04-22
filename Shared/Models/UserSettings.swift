@@ -9,7 +9,10 @@ final class UserSettings {
     private let defaultCommentKey = "com.beewatch.defaultComment"
 
     // Use App Group shared container for data sharing with complications
-    private let sharedDefaults = UserDefaults(suiteName: "group.com.beewatch") ?? UserDefaults.standard
+    // Try App Group first, fall back to standard if not available
+    private var sharedDefaults: UserDefaults {
+        UserDefaults(suiteName: "group.com.beewatch") ?? UserDefaults.standard
+    }
 
     // Stored properties for @Observable to track
     private var _apiKey: String = ""
@@ -22,6 +25,8 @@ final class UserSettings {
             _apiKey = newValue
             // Save to shared UserDefaults (accessible by complications)
             sharedDefaults.set(newValue, forKey: apiKeyKey)
+            // Also save to standard as backup
+            UserDefaults.standard.set(newValue, forKey: apiKeyKey)
         }
     }
 
@@ -30,6 +35,7 @@ final class UserSettings {
         set {
             _username = newValue
             sharedDefaults.set(newValue, forKey: usernameKey)
+            UserDefaults.standard.set(newValue, forKey: usernameKey)
         }
     }
 
@@ -38,6 +44,7 @@ final class UserSettings {
         set {
             _defaultComment = newValue
             sharedDefaults.set(newValue, forKey: defaultCommentKey)
+            UserDefaults.standard.set(newValue, forKey: defaultCommentKey)
         }
     }
 
@@ -46,16 +53,28 @@ final class UserSettings {
     }
 
     private init() {
-        // Load saved values from shared UserDefaults
-        _apiKey = sharedDefaults.string(forKey: apiKeyKey) ?? ""
-        _username = sharedDefaults.string(forKey: usernameKey) ?? "me"
-        _defaultComment = sharedDefaults.string(forKey: defaultCommentKey) ?? "from my Apple Watch"
+        // Load saved values - try App Group first, then standard UserDefaults
+        _apiKey = sharedDefaults.string(forKey: apiKeyKey)
+            ?? UserDefaults.standard.string(forKey: apiKeyKey)
+            ?? ""
+        _username = sharedDefaults.string(forKey: usernameKey)
+            ?? UserDefaults.standard.string(forKey: usernameKey)
+            ?? "me"
+        _defaultComment = sharedDefaults.string(forKey: defaultCommentKey)
+            ?? UserDefaults.standard.string(forKey: defaultCommentKey)
+            ?? "from my Apple Watch"
     }
 
     func reloadSettings() {
-        _apiKey = sharedDefaults.string(forKey: apiKeyKey) ?? ""
-        _username = sharedDefaults.string(forKey: usernameKey) ?? "me"
-        _defaultComment = sharedDefaults.string(forKey: defaultCommentKey) ?? "from my Apple Watch"
+        _apiKey = sharedDefaults.string(forKey: apiKeyKey)
+            ?? UserDefaults.standard.string(forKey: apiKeyKey)
+            ?? ""
+        _username = sharedDefaults.string(forKey: usernameKey)
+            ?? UserDefaults.standard.string(forKey: usernameKey)
+            ?? "me"
+        _defaultComment = sharedDefaults.string(forKey: defaultCommentKey)
+            ?? UserDefaults.standard.string(forKey: defaultCommentKey)
+            ?? "from my Apple Watch"
     }
 
     func clearAll() {

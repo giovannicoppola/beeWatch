@@ -58,7 +58,7 @@ struct ReminderSettingsView: View {
                     }
                 }
                 .pickerStyle(.wheel)
-                .frame(width: 60)
+                .frame(width: 60, height: 80)
 
                 Text(":")
 
@@ -68,7 +68,7 @@ struct ReminderSettingsView: View {
                     }
                 }
                 .pickerStyle(.wheel)
-                .frame(width: 50)
+                .frame(width: 50, height: 80)
             }
             .padding()
             .background(Color.gray.opacity(0.2))
