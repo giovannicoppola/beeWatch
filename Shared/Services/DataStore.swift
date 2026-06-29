@@ -13,6 +13,15 @@ final class DataStore: ObservableObject {
     private var frequentValues: [String: [FrequentValue]] = [:]
     private let frequentValuesKey = "com.beewatch.frequentValues"
 
+    /// Slugs of goals awaiting post-submission confirmation, mapped to the time
+    /// after which we stop suppressing their real (possibly still-overdue)
+    /// state. While a goal is in here and the server hasn't confirmed the
+    /// recompute, `refreshGoals()` keeps its non-alarming "updating" appearance
+    /// instead of rebuilding it as a stale "Derailed!". Bounded so a genuine
+    /// derail still surfaces if the recompute never settles in our favour.
+    private var optimisticDeadlines: [String: Date] = [:]
+    private let optimisticWindow: TimeInterval = 90
+
     private init() {
         loadFrequentValues()
     }
@@ -31,7 +40,25 @@ final class DataStore: ObservableObject {
             let sortedResponses = responses.sorted {
                 ($0.losedate ?? .infinity) < ($1.losedate ?? .infinity)
             }
-            goals = sortedResponses.map { $0.toGoal() }
+            let newGoals = sortedResponses.map { $0.toGoal() }
+
+            // `toGoal()` produces fresh objects with `isOptimisticallyRefreshed
+            // == false`, which would otherwise discard the "updating" state we
+            // set right after a submission — flashing a stale "Derailed!" while
+            // Beeminder is still recomputing. Re-apply that state (bounded by
+            // `optimisticWindow`) until the server confirms the goal is settled.
+            let now = Date()
+            for goal in newGoals {
+                guard let deadline = optimisticDeadlines[goal.slug] else { continue }
+                if now < deadline && (goal.queued || goal.losedate <= now) {
+                    goal.isOptimisticallyRefreshed = true
+                } else {
+                    // Confirmed settled (losedate in the future, not queued) or
+                    // the window elapsed — let the real state show from now on.
+                    optimisticDeadlines.removeValue(forKey: goal.slug)
+                }
+            }
+            goals = newGoals
 
             cacheGoalsForComplications(sortedResponses)
 
@@ -140,21 +167,35 @@ final class DataStore: ObservableObject {
 
         WidgetCenter.shared.reloadAllTimelines()
 
-        // Safety net: some recomputes take longer than our poll window. Kick
-        // the complications again shortly so they pick up any late update.
+        // Self-healing safety net: Beeminder's recompute can finish well after
+        // our initial poll window, and we don't want the list left stuck on a
+        // stale "overdue" state (the bug where the complication updates but the
+        // app list doesn't). Keep refreshing on a backoff until the server
+        // confirms the goal is settled, or we exhaust the schedule. The last
+        // delay intentionally extends past `optimisticWindow` so that, if the
+        // goal never settles, the final refresh surfaces its real state rather
+        // than leaving it perpetually "updating".
         Task { [weak self] in
-            try? await Task.sleep(nanoseconds: 15_000_000_000)
-            await self?.lateRefreshAfterSubmission(slug: goalSlug)
+            let delaysSeconds: [UInt64] = [3, 5, 8, 15, 25, 40]
+            for delay in delaysSeconds {
+                try? await Task.sleep(nanoseconds: delay * 1_000_000_000)
+                guard let self else { return }
+                let settled = await self.refreshAfterSubmission(slug: goalSlug)
+                if settled { break }
+            }
         }
 
         return response.toDatapoint(goalSlug: goalSlug)
     }
 
-    /// Called ~15s after a datapoint submission to pick up slow server
-    /// recomputes and push fresh stats to the widgets.
-    private func lateRefreshAfterSubmission(slug: String) async {
+    /// Refreshes the full list + complications after a submission and reports
+    /// whether the given goal's server stats look settled (recompute finished
+    /// and it's no longer overdue), so the retry loop can stop early.
+    private func refreshAfterSubmission(slug: String) async -> Bool {
         await refreshGoals()
         WidgetCenter.shared.reloadAllTimelines()
+        guard let goal = getGoal(slug: slug) else { return true }
+        return !goal.queued && goal.losedate > Date()
     }
 
     /// Applies an optimistic local update so the UI doesn't momentarily show
@@ -164,6 +205,9 @@ final class DataStore: ObservableObject {
     private func applyOptimisticUpdate(slug: String, submittedValue: Double) {
         guard let goal = getGoal(slug: slug) else { return }
         goal.isOptimisticallyRefreshed = true
+        // Suppress a false "Derailed!" for this goal across subsequent refreshes
+        // until the server confirms the recompute or this window elapses.
+        optimisticDeadlines[slug] = Date().addingTimeInterval(optimisticWindow)
         // Project forward only if we know how much was needed and the user
         // entered at least that. `amountNeededToday` already returns the
         // correct delta (it accounts for kyoom vs non-kyoom by subtracting
