@@ -59,6 +59,10 @@ struct GoalDetailView: View {
             }
         }
         .task {
+            // Pull fresh stats for this goal before trusting its derail/need
+            // state — the in-memory copy may be from a previous session when we
+            // arrive here via a complication deep link.
+            await dataStore.refreshGoal(slug: goalSlug)
             await loadDatapoints()
         }
     }
@@ -78,11 +82,6 @@ struct GoalDetailView: View {
                     .multilineTextAlignment(.center)
             }
 
-            if let bump = goal.safebump, !goal.isDerailed, goal.safebuf <= 1 {
-                Text(String(format: "Enter %@ to be safe today", formatNumber(bump)))
-                    .font(.caption2)
-                    .foregroundColor(.blue)
-            }
 
             HStack {
                 Text("Rate: \(goal.formattedRate)")
@@ -118,12 +117,6 @@ struct GoalDetailView: View {
         }
     }
 
-    private func formatNumber(_ value: Double) -> String {
-        if value.truncatingRemainder(dividingBy: 1) == 0 {
-            return String(Int(value))
-        }
-        return String(format: "%.1f", value)
-    }
 
     private func quickEntrySection(_ goal: Goal) -> some View {
         VStack(alignment: .leading, spacing: 8) {

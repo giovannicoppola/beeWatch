@@ -2,6 +2,7 @@ import SwiftUI
 import SwiftData
 import UserNotifications
 import WatchKit
+import WidgetKit
 
 @main
 struct beeWatch_Watch_App: App {
@@ -24,6 +25,16 @@ struct beeWatch_Watch_App: App {
                 UserSettings.shared.reloadSettings()
                 // Also request latest settings from phone
                 WatchConnectivityManager.shared.requestSettingsFromPhone()
+                // Refresh goal stats on resume. A view's `.task` only runs once
+                // per appearance, so on a warm resume (the common case when
+                // tapping a complication) nothing else re-fetches, and the UI
+                // would otherwise show a stale `losedate` → false "Derailed!".
+                if UserSettings.shared.isConfigured {
+                    Task {
+                        await DataStore.shared.refreshGoals()
+                        WidgetCenter.shared.reloadAllTimelines()
+                    }
+                }
             }
         }
     }

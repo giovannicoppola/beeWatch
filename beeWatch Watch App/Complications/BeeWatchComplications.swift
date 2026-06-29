@@ -12,12 +12,42 @@ struct GoalSnapshot {
     /// which auto-updates every second without needing a new timeline entry.
     let losedate: Date
     let needText: String?
+    /// When this snapshot was read from the on-disk cache. `nil` means it came
+    /// from a live fetch on this render, so its `losedate` is trustworthy.
+    /// `losedate` is a moving target (it advances every time data is entered or
+    /// a day rolls over), so a `losedate` from an old cache cannot be used to
+    /// conclude the goal has actually derailed.
+    let cachedAt: Date?
+}
+
+/// How a goal's derail state should be rendered, accounting for data freshness.
+enum DerailDisplay {
+    /// `losedate` is in the future — the goal is safe (render by `safebuf`).
+    case safe
+    /// `losedate` has passed and we trust it (live data, or the goal was
+    /// already past its deadline when we cached it).
+    case derailed
+    /// `losedate` has passed, but only according to a cache written *before*
+    /// that deadline. We can't tell whether data was entered since, so we must
+    /// not flash a skull — render a neutral "needs refresh" state instead.
+    case stale
 }
 
 extension GoalSnapshot {
-    /// Computed per-render: true if `losedate` has passed by `now`.
+    /// Computed per-render against `now` (the entry's render date).
+    func derailDisplay(at now: Date) -> DerailDisplay {
+        if losedate > now { return .safe }
+        // losedate has passed.
+        guard let cachedAt else { return .derailed }  // live data: trust it
+        // If the goal was already past its losedate when we cached it, that was
+        // a real derail we actually observed. Otherwise it only crossed losedate
+        // after our last successful fetch, so the value is ambiguous → stale.
+        return losedate <= cachedAt ? .derailed : .stale
+    }
+
+    /// Convenience: true only for a *trusted* derail.
     func isDerailed(at now: Date) -> Bool {
-        losedate <= now
+        derailDisplay(at: now) == .derailed
     }
 }
 
@@ -66,6 +96,7 @@ func cacheGoals(_ goals: [GoalResponse]) {
     let sorted = goals.sorted {
         ($0.losedate ?? .infinity) < ($1.losedate ?? .infinity)
     }
+    let cachedAt = Date().timeIntervalSince1970
     let snapshots = sorted.prefix(5).map { goal -> [String: Any] in
         [
             "slug": goal.slug,
@@ -74,7 +105,8 @@ func cacheGoals(_ goals: [GoalResponse]) {
             "losedate": goal.losedate ?? 0,
             "baremin": goal.baremin ?? "",
             "limsum": goal.limsum ?? "",
-            "deltaText": goal.deltaText ?? ""
+            "deltaText": goal.deltaText ?? "",
+            "cachedAt": cachedAt
         ]
     }
     sharedDefaults().set(snapshots, forKey: goalCacheKey)
@@ -88,12 +120,17 @@ func getCachedGoal(at index: Int) -> GoalSnapshot? {
     let limsum = data["limsum"] as? String
     let deltaText = data["deltaText"] as? String
     let baremin = data["baremin"] as? String
+    // Fall back to `.distantPast` when the cache predates the cachedAt field, so
+    // an unknown-age cache is treated as old (conservative: prefers .stale over
+    // a false skull).
+    let cachedAt = data["cachedAt"] as? Double ?? 0
     return GoalSnapshot(
         slug: data["slug"] as? String ?? "",
         title: data["title"] as? String ?? "Goal \(index + 1)",
         safebuf: data["safebuf"] as? Int ?? 0,
         losedate: Date(timeIntervalSince1970: losedate),
-        needText: firstNonEmpty(limsum, deltaText, baremin)
+        needText: firstNonEmpty(limsum, deltaText, baremin),
+        cachedAt: cachedAt > 0 ? Date(timeIntervalSince1970: cachedAt) : .distantPast
     )
 }
 
@@ -191,7 +228,8 @@ private func snapshot(from goal: GoalResponse) -> GoalSnapshot {
         title: goal.title,
         safebuf: goal.safebuf ?? 0,
         losedate: Date(timeIntervalSince1970: goal.losedate ?? 0),
-        needText: firstNonEmpty(goal.limsum, goal.deltaText, goal.baremin)
+        needText: firstNonEmpty(goal.limsum, goal.deltaText, goal.baremin),
+        cachedAt: nil  // live fetch — losedate is trustworthy
     )
 }
 
@@ -322,10 +360,24 @@ struct GoalComplicationView: View {
     let entry: GoalEntry
     @Environment(\.widgetFamily) var family
 
-    /// Whether this goal is currently derailed, evaluated per-render against
-    /// the entry's `date` (which WidgetKit sets to the re-render time).
-    private var isDerailed: Bool {
-        entry.goal?.isDerailed(at: entry.date) ?? false
+    /// Derail state, evaluated per-render against the entry's `date` (which
+    /// WidgetKit sets to the re-render time) and the snapshot's freshness.
+    private var derailState: DerailDisplay {
+        entry.goal?.derailDisplay(at: entry.date) ?? .safe
+    }
+
+    /// Whether this goal is *trustably* derailed (never true for stale cache).
+    private var isDerailed: Bool { derailState == .derailed }
+
+    /// Whether we're showing possibly-stale cached data whose `losedate` has
+    /// passed — render neutrally instead of alarming the user with a skull.
+    private var isStale: Bool { derailState == .stale }
+
+    /// True when we should show the urgent/red treatment: a trusted derail, or
+    /// a beemergency (`safebuf <= 0`) on data we trust. Never for stale data.
+    private func isUrgent(_ goal: GoalSnapshot) -> Bool {
+        if isStale { return false }
+        return isDerailed || goal.safebuf <= 0
     }
 
     var body: some View {
@@ -349,7 +401,24 @@ struct GoalComplicationView: View {
     private var circularView: some View {
         Group {
             if let goal = entry.goal {
-                if goal.safebuf <= 0 || isDerailed {
+                if isStale {
+                    // Possibly-stale cache whose losedate has passed: show the
+                    // last-known buffer in a neutral tint, never a skull.
+                    Gauge(value: Double(min(max(goal.safebuf, 0), 7)), in: 0...7) {
+                        Text("")
+                    } currentValueLabel: {
+                        VStack(spacing: 0) {
+                            Text("\(goal.safebuf)")
+                                .font(.system(.title2, design: .rounded, weight: .bold))
+                            Text(shortenedTitle(goal.title))
+                                .font(.system(size: 9))
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.5)
+                        }
+                    }
+                    .gaugeStyle(.accessoryCircular)
+                    .tint(.gray)
+                } else if goal.safebuf <= 0 || isDerailed {
                     Gauge(value: 1.0) {
                         Text("")
                     } currentValueLabel: {
@@ -404,16 +473,21 @@ struct GoalComplicationView: View {
     private var rectangularView: some View {
         VStack(alignment: .leading, spacing: 2) {
             if let goal = entry.goal {
+                let urgent = isUrgent(goal)
                 HStack {
-                    Text(isDerailed ? "💀" : (goal.safebuf <= 0 ? "🔴" : "🐝"))
+                    Text(isStale ? "🐝" : (isDerailed ? "💀" : (goal.safebuf <= 0 ? "🔴" : "🐝")))
                     Text(goal.title)
                         .font(.headline)
                         .lineLimit(1)
-                        .foregroundStyle(goal.safebuf <= 0 || isDerailed ? .red : .primary)
+                        .foregroundStyle(urgent ? .red : .primary)
                 }
                 // Live-updating countdown via .relative style: recomputes every
                 // second without needing a new timeline entry.
-                if isDerailed {
+                if isStale {
+                    Text("Tap to refresh")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                } else if isDerailed {
                     Text("Derailed!")
                         .font(.caption)
                         .foregroundStyle(.red)
@@ -422,7 +496,7 @@ struct GoalComplicationView: View {
                         .font(.caption)
                         .foregroundStyle(goal.safebuf <= 0 ? .red : .primary)
                 }
-                if let need = goal.needText {
+                if let need = goal.needText, !isStale {
                     Text(need).font(.caption2).foregroundStyle(.secondary).lineLimit(1)
                 }
             } else {
@@ -436,10 +510,12 @@ struct GoalComplicationView: View {
     private var inlineView: some View {
         Group {
             if let goal = entry.goal {
-                let icon = isDerailed ? "💀" : (goal.safebuf <= 0 ? "🔴" : "🐝")
-                if isDerailed {
-                    Text("\(icon) \(goal.title): Derailed!")
+                if isStale {
+                    Text("🐝 \(goal.title)")
+                } else if isDerailed {
+                    Text("💀 \(goal.title): Derailed!")
                 } else {
+                    let icon = goal.safebuf <= 0 ? "🔴" : "🐝"
                     Text("\(icon) \(goal.title): ") + Text(goal.losedate, style: .relative)
                 }
             } else {
@@ -448,22 +524,41 @@ struct GoalComplicationView: View {
         }
     }
 
+    // Concrete-typed color helpers keep the corner view's modifiers from
+    // tripping the Swift type-checker (mixed ShapeStyle ternaries are slow).
+    private func cornerTextColor(_ goal: GoalSnapshot) -> Color {
+        if isStale { return .secondary }
+        return isUrgent(goal) ? .red : .primary
+    }
+
+    private func gaugeTint(_ goal: GoalSnapshot) -> Color {
+        if isStale { return .gray }
+        if isUrgent(goal) { return .red }
+        return goal.safebuf <= 1 ? .orange : .green
+    }
+
     private var cornerView: some View {
-        let isUrgent = (entry.goal?.safebuf ?? 0) <= 0 || isDerailed
-        return Text(entry.goal.map { isDerailed ? "💀" : "\($0.safebuf)" } ?? "?")
-            .font(.system(.title, design: .rounded, weight: .bold))
-            .foregroundStyle(isUrgent ? .red : .primary)
-            .widgetCurvesContent()
-            .widgetLabel {
-                if let goal = entry.goal {
-                    Gauge(value: Double(min(goal.safebuf, 7)), in: 0...7) {
-                        Label(goal.title, systemImage: "target")
+        Group {
+            if let goal = entry.goal {
+                Text(isDerailed ? "💀" : "\(goal.safebuf)")
+                    .font(.system(.title, design: .rounded, weight: .bold))
+                    .foregroundStyle(cornerTextColor(goal))
+                    .widgetCurvesContent()
+                    .widgetLabel {
+                        Gauge(value: Double(min(max(goal.safebuf, 0), 7)), in: 0...7) {
+                            Label(goal.title, systemImage: "target")
+                        }
+                        .tint(gaugeTint(goal))
                     }
-                    .tint(goal.safebuf <= 0 || isDerailed ? .red : (goal.safebuf <= 1 ? .orange : .green))
-                } else {
-                    Label("Goal \(entry.goalIndex + 1)", systemImage: "target")
-                }
+            } else {
+                Text("?")
+                    .font(.system(.title, design: .rounded, weight: .bold))
+                    .widgetCurvesContent()
+                    .widgetLabel {
+                        Label("Goal \(entry.goalIndex + 1)", systemImage: "target")
+                    }
             }
+        }
     }
 }
 
@@ -475,7 +570,8 @@ private func placeholderSnapshot(title: String, safebuf: Int, daysAhead: Int) ->
         title: title,
         safebuf: safebuf,
         losedate: Date().addingTimeInterval(TimeInterval(daysAhead) * 24 * 3600),
-        needText: nil
+        needText: nil,
+        cachedAt: nil
     )
 }
 
@@ -670,7 +766,8 @@ struct MostUrgentProvider: TimelineProvider {
                 title: "Most Urgent",
                 safebuf: 0,
                 losedate: Date().addingTimeInterval(3600),
-                needText: nil
+                needText: nil,
+                cachedAt: nil
             ),
             goalIndex: -1
         )

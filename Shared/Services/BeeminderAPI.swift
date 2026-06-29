@@ -251,9 +251,20 @@ struct GoalResponse: Codable {
     // and baremin/safebuf/losedate/limsum/etc. are stale. Wait for false.
     let queued: Bool?
     let updatedAt: Double?
-    // Numeric amount needed to reach the next safe day (out of red).
+    // Absolute y-axis value the goal needs to reach for one more safe day.
+    // NOTE: For cumulative (kyoom) goals this is the running total to reach,
+    // not the delta to enter as a single datapoint. The amount the user
+    // should enter today is `safebump - curval`.
     let safebump: Double?
-    // Human-readable "need" text, e.g. "+1 within 2 days".
+    // Value of the most recent datapoint (for kyoom goals: the cumulative
+    // total so far; for non-kyoom goals: the latest reading).
+    let curval: Double?
+    // Cumulative / auto-summing goal (Do More, Do Less). When true, datapoints
+    // are added to a running total; when false, each datapoint is an absolute
+    // reading (e.g. weight).
+    let kyoom: Bool?
+    // Human-readable "need" text, e.g. "+1 within 2 days". Deprecated by
+    // Beeminder but still returned; we fall back to it after `limsum`.
     let deltaText: String?
 
     enum CodingKeys: String, CodingKey {
@@ -262,7 +273,7 @@ struct GoalResponse: Codable {
         case goaldate, goalval, rate, runits, pledge, safebuf, losedate
         case thumbUrl = "thumb_url"
         case graphUrl = "graph_url"
-        case yaw, limsum, baremin, queued, safebump
+        case yaw, limsum, baremin, queued, safebump, curval, kyoom
         case updatedAt = "updated_at"
         case deltaText = "delta_text"
     }
@@ -288,6 +299,8 @@ struct GoalResponse: Codable {
         goal.queued = queued ?? false
         goal.updatedAt = updatedAt ?? 0
         goal.safebump = safebump
+        goal.curval = curval
+        goal.kyoom = kyoom ?? false
         goal.deltaText = deltaText
         return goal
     }

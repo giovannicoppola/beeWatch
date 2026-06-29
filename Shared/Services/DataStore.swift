@@ -45,6 +45,7 @@ final class DataStore: ObservableObject {
 
     private func cacheGoalsForComplications(_ goals: [GoalResponse]) {
         let defaults = UserDefaults(suiteName: "group.com.beewatch") ?? UserDefaults.standard
+        let cachedAt = Date().timeIntervalSince1970
         let snapshots = goals.prefix(5).map { goal -> [String: Any] in
             [
                 "slug": goal.slug,
@@ -53,7 +54,8 @@ final class DataStore: ObservableObject {
                 "losedate": goal.losedate ?? 0,
                 "baremin": goal.baremin ?? "",
                 "limsum": goal.limsum ?? "",
-                "deltaText": goal.deltaText ?? ""
+                "deltaText": goal.deltaText ?? "",
+                "cachedAt": cachedAt
             ]
         }
         defaults.set(snapshots, forKey: "com.beewatch.goalCache")
@@ -64,11 +66,32 @@ final class DataStore: ObservableObject {
         goals.first { $0.slug == slug }
     }
 
+    /// Refreshes a single goal's stats from the server and merges them into the
+    /// in-memory goal. Used when opening a goal (e.g. via a complication deep
+    /// link) so we don't render stale `losedate`/`needText`/derail state that
+    /// was captured in a previous session. Cheaper than a full `refreshGoals()`
+    /// and safe to call from a detail view's `.task`.
+    func refreshGoal(slug: String) async {
+        do {
+            let response = try await BeeminderAPI.shared.fetchGoal(slug: slug)
+            // Only clear the optimistic flag if the server is done recomputing.
+            mergeFreshGoal(response, clearOptimistic: !(response.queued ?? false))
+        } catch {
+            // Leave existing in-memory state in place on failure; the list-level
+            // refresh and complication reloads will catch up.
+        }
+    }
+
     // MARK: - Datapoints
 
     func fetchDatapoints(for goalSlug: String) async throws -> [Datapoint] {
         let responses = try await BeeminderAPI.shared.fetchDatapoints(goalSlug: goalSlug)
-        return responses.map { $0.toDatapoint(goalSlug: goalSlug) }
+        // Beeminder returns datapoints in ascending timestamp order, so a naive
+        // `prefix(5)` in the UI would show the oldest of the fetched window.
+        // Sort newest-first here so "Recent Entries" is actually recent.
+        return responses
+            .map { $0.toDatapoint(goalSlug: goalSlug) }
+            .sorted { $0.timestamp > $1.timestamp }
     }
 
     /// Submits a datapoint and returns only once we have server-confirmed fresh
@@ -141,10 +164,12 @@ final class DataStore: ObservableObject {
     private func applyOptimisticUpdate(slug: String, submittedValue: Double) {
         guard let goal = getGoal(slug: slug) else { return }
         goal.isOptimisticallyRefreshed = true
-        // If the user entered at least the numeric amount needed to be safe
-        // today, project the goal forward by ~1 safe day so the complication
-        // and list don't keep showing "due today" until the server catches up.
-        if let safebump = goal.safebump, submittedValue >= safebump {
+        // Project forward only if we know how much was needed and the user
+        // entered at least that. `amountNeededToday` already returns the
+        // correct delta (it accounts for kyoom vs non-kyoom by subtracting
+        // `curval` from `safebump`).
+        if let needed = goal.amountNeededToday, needed > 0,
+           submittedValue >= needed {
             if goal.safebuf < 1 { goal.safebuf = 1 }
             if goal.losedate <= Date() {
                 goal.losedate = Date().addingTimeInterval(24 * 3600)
@@ -170,6 +195,8 @@ final class DataStore: ObservableObject {
         goal.queued = response.queued ?? false
         goal.updatedAt = response.updatedAt ?? goal.updatedAt
         goal.safebump = response.safebump
+        goal.curval = response.curval
+        goal.kyoom = response.kyoom ?? goal.kyoom
         goal.deltaText = response.deltaText
         if clearOptimistic {
             goal.isOptimisticallyRefreshed = false

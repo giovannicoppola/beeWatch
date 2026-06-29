@@ -58,6 +58,14 @@ struct GoalListView: View {
         }
     }
 
+    /// A string that changes whenever any field affecting a row's appearance
+    /// (urgency color, derail state, countdown, need text) changes. Used as the
+    /// row's `.id` so SwiftUI re-renders it after a refresh despite `Goal`'s
+    /// slug-only equality.
+    private func rowVersion(_ goal: Goal) -> String {
+        "\(goal.slug)|\(goal.safebuf)|\(Int(goal.losedate.timeIntervalSince1970))|\(goal.isOptimisticallyRefreshed)|\(goal.queued)|\(goal.needText ?? "")"
+    }
+
     private func handleDeepLink(_ url: URL) {
         // Handle URLs like beewatch://goal/exercise
         guard url.scheme == "beewatch",
@@ -81,6 +89,12 @@ struct GoalListView: View {
                 NavigationLink(value: goal) {
                     GoalRowView(goal: goal)
                 }
+                // `Goal` is Equatable/Hashable by `slug` only (needed for stable
+                // NavigationStack diffing), which makes SwiftUI treat a row as
+                // unchanged when the goal's stats refresh under the same slug —
+                // leaving the list stale after a refresh. Tie the row's identity
+                // to the volatile display fields so it rebuilds when they change.
+                .id(rowVersion(goal))
             }
 
             // Refresh button after goals

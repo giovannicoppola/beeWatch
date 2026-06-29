@@ -36,8 +36,16 @@ final class Goal: Identifiable, Hashable {
     // Server-side modification timestamp (unix seconds). Used to detect when
     // an async recompute has actually finished.
     var updatedAt: Double = 0
-    // Numeric value that would move the goal to the next safe day.
+    // Absolute y-axis value the goal needs to reach for one more safe day.
+    // For kyoom (cumulative) goals this is the running total to reach, NOT
+    // the value to enter as a single datapoint. Use `amountNeededToday` for
+    // the actual delta the user should enter.
     var safebump: Double?
+    // Most recent datapoint value (cumulative total for kyoom, latest reading
+    // otherwise). Needed to convert `safebump` into a usable delta.
+    var curval: Double?
+    // True for cumulative / auto-summing goals (Do More, Do Less).
+    var kyoom: Bool = false
     // Human-readable delta text, e.g. "+1 within 2 days".
     var deltaText: String?
     // When true, the app has just submitted a datapoint and the server-reported
@@ -114,13 +122,36 @@ final class Goal: Identifiable, Hashable {
     }
 
     /// The best "how much do I need" string to display: prefer the explicit
-    /// `delta_text`/`limsum` if present (these are what Beeminder itself shows
+    /// `limsum`/`delta_text` if present (these are what Beeminder itself shows
     /// on the web UI), falling back to `baremin`.
     var needText: String? {
         if let limsum, !limsum.isEmpty { return limsum }
         if let deltaText, !deltaText.isEmpty { return deltaText }
         if let baremin, !baremin.isEmpty { return baremin }
         return nil
+    }
+
+    /// Numeric amount the user should enter today as a single datapoint to
+    /// gain one more safe day. Returns `nil` when we can't compute it (missing
+    /// `safebump` or `curval`, or the goal is already safe so the answer is
+    /// not "today"). Result is positive for "do more"-style goals, negative
+    /// for "do less"-style goals.
+    ///
+    /// `safebump` is the absolute y-axis value the cumulative graph needs to
+    /// reach; for kyoom (cumulative) goals you must subtract the current
+    /// running total (`curval`) to get the delta that should be entered.
+    /// For non-kyoom goals (e.g. weight), the user enters absolute readings,
+    /// so the delta vs the current reading is also `safebump - curval`.
+    var amountNeededToday: Double? {
+        guard let safebump, let curval else { return nil }
+        let delta = safebump - curval
+        // If the goal isn't due today (safebuf > 0), this isn't a "today"
+        // ask and the number would be misleading.
+        guard safebuf <= 0 else { return nil }
+        // Filter out absurd values (sometimes the server can transiently
+        // return mismatched safebump/curval during recompute).
+        if delta.magnitude > 1_000_000 { return nil }
+        return delta
     }
 }
 
