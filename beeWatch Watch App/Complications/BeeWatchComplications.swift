@@ -380,6 +380,17 @@ struct GoalComplicationView: View {
         return isDerailed || goal.safebuf <= 0
     }
 
+    /// Maps a safety buffer to a tint using the same tiers as the goal list and
+    /// detail screen (`UrgencyLevel.forSafebuf`), so colours stay consistent.
+    private func urgencyTint(_ safebuf: Int) -> Color {
+        switch UrgencyLevel.forSafebuf(safebuf) {
+        case .red: return .red
+        case .orange: return .orange
+        case .blue: return .blue
+        case .green: return .green
+        }
+    }
+
     var body: some View {
         Group {
             switch family {
@@ -447,7 +458,7 @@ struct GoalComplicationView: View {
                         }
                     }
                     .gaugeStyle(.accessoryCircular)
-                    .tint(goal.safebuf <= 1 ? .orange : .green)
+                    .tint(urgencyTint(goal.safebuf))
                 }
             } else {
                 VStack(spacing: 0) {
@@ -534,7 +545,7 @@ struct GoalComplicationView: View {
     private func gaugeTint(_ goal: GoalSnapshot) -> Color {
         if isStale { return .gray }
         if isUrgent(goal) { return .red }
-        return goal.safebuf <= 1 ? .orange : .green
+        return urgencyTint(goal.safebuf)
     }
 
     private var cornerView: some View {

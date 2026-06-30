@@ -77,20 +77,14 @@ final class Goal: Identifiable, Hashable {
         return losedate.timeIntervalSince(Date()) <= 0
     }
 
+    // Colour purely by the safety buffer so the list, detail screen, and
+    // complications stay consistent. The transient "updating" state after a
+    // submission is conveyed by the "Updating…" label and by suppressing the
+    // derail indicator (see `isDerailed`), not by recolouring — recolouring
+    // here previously made a queued/just-updated goal show blue in the list
+    // while the complication and a refreshed detail screen showed orange.
     var urgencyColor: UrgencyLevel {
-        if isOptimisticallyRefreshed || queued {
-            // Optimistically treat as safe while server is recomputing.
-            return safebuf >= 3 ? .green : .blue
-        }
-        if safebuf <= 0 {
-            return .red
-        } else if safebuf == 1 {
-            return .orange
-        } else if safebuf <= 3 {
-            return .blue
-        } else {
-            return .green
-        }
+        UrgencyLevel.forSafebuf(safebuf)
     }
 
     var timeRemaining: String {
@@ -157,4 +151,19 @@ final class Goal: Identifiable, Hashable {
 
 enum UrgencyLevel {
     case red, orange, blue, green
+
+    /// Canonical mapping from a goal's safety buffer (days remaining) to an
+    /// urgency tier. Single source of truth shared by the goal list, the detail
+    /// screen, and the complications so their colours always agree.
+    static func forSafebuf(_ safebuf: Int) -> UrgencyLevel {
+        if safebuf <= 0 {
+            return .red
+        } else if safebuf == 1 {
+            return .orange
+        } else if safebuf <= 3 {
+            return .blue
+        } else {
+            return .green
+        }
+    }
 }
