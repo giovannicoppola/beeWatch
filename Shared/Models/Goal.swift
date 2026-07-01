@@ -149,7 +149,7 @@ final class Goal: Identifiable, Hashable {
     }
 }
 
-enum UrgencyLevel {
+enum UrgencyLevel: Equatable {
     case red, orange, blue, green
 
     /// Canonical mapping from a goal's safety buffer (days remaining) to an

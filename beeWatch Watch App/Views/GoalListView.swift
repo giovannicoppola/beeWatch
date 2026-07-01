@@ -58,12 +58,24 @@ struct GoalListView: View {
         }
     }
 
-    /// A string that changes whenever any field affecting a row's appearance
-    /// (urgency color, derail state, countdown, need text) changes. Used as the
-    /// row's `.id` so SwiftUI re-renders it after a refresh despite `Goal`'s
-    /// slug-only equality.
-    private func rowVersion(_ goal: Goal) -> String {
-        "\(goal.slug)|\(goal.safebuf)|\(Int(goal.losedate.timeIntervalSince1970))|\(goal.isOptimisticallyRefreshed)|\(goal.queued)|\(goal.needText ?? "")"
+    /// Value-type snapshots of what each row displays. `ForEach` must iterate
+    /// over these (not the `Goal` class) because `Goal` is Equatable by slug
+    /// only, so SwiftUI's `ForEach`/view diffing treats a refreshed goal as
+    /// unchanged and never re-renders the row. Value structs diff by content, so
+    /// a changed safebuf/losedate/need reliably updates the list.
+    private var goalRows: [GoalRow] {
+        dataStore.goals.map { goal in
+            GoalRow(
+                id: goal.slug,
+                title: goal.title,
+                urgency: goal.urgencyColor,
+                isDerailed: goal.isDerailed,
+                isUpdating: goal.isOptimisticallyRefreshed || goal.queued,
+                losedate: goal.losedate,
+                needText: goal.needText,
+                pledge: goal.pledge
+            )
+        }
     }
 
     private func handleDeepLink(_ url: URL) {
@@ -85,16 +97,12 @@ struct GoalListView: View {
 
     private var goalsList: some View {
         List {
-            ForEach(dataStore.goals) { goal in
-                NavigationLink(value: goal) {
-                    GoalRowView(goal: goal)
+            ForEach(goalRows) { row in
+                if let goal = dataStore.getGoal(slug: row.id) {
+                    NavigationLink(value: goal) {
+                        GoalRowView(row: row)
+                    }
                 }
-                // `Goal` is Equatable/Hashable by `slug` only (needed for stable
-                // NavigationStack diffing), which makes SwiftUI treat a row as
-                // unchanged when the goal's stats refresh under the same slug —
-                // leaving the list stale after a refresh. Tie the row's identity
-                // to the volatile display fields so it rebuilds when they change.
-                .id(rowVersion(goal))
             }
 
             // Refresh button after goals
@@ -194,41 +202,53 @@ struct GoalListView: View {
     }
 }
 
+/// Value-type snapshot of a goal's row appearance. See `goalRows`.
+struct GoalRow: Identifiable, Equatable {
+    let id: String            // slug
+    let title: String
+    let urgency: UrgencyLevel
+    let isDerailed: Bool
+    let isUpdating: Bool
+    let losedate: Date
+    let needText: String?
+    let pledge: Double
+}
+
 struct GoalRowView: View {
-    let goal: Goal
+    let row: GoalRow
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             HStack {
-                if goal.isDerailed {
+                if row.isDerailed {
                     Text("💀")
                         .font(.caption)
                 } else {
                     urgencyIndicator
                 }
-                Text(goal.title)
+                Text(row.title)
                     .font(.headline)
                     .lineLimit(1)
             }
 
             HStack {
-                if goal.isDerailed {
+                if row.isDerailed {
                     Text("Derailed!")
                         .font(.caption)
                         .foregroundColor(.red)
-                } else if goal.isOptimisticallyRefreshed || goal.queued {
+                } else if row.isUpdating {
                     Text("Updating…")
                         .font(.caption)
                         .foregroundColor(.secondary)
                 } else {
-                    Text(goal.losedate, style: .relative)
+                    Text(row.losedate, style: .relative)
                         .font(.caption)
                         .foregroundColor(urgencyColor)
                 }
 
                 Spacer()
 
-                if let need = goal.needText {
+                if let need = row.needText {
                     Text(need)
                         .font(.caption2)
                         .foregroundColor(.secondary)
@@ -236,8 +256,8 @@ struct GoalRowView: View {
                 }
             }
 
-            if goal.pledge > 0 {
-                Text("$\(Int(goal.pledge)) at risk")
+            if row.pledge > 0 {
+                Text("$\(Int(row.pledge)) at risk")
                     .font(.caption2)
                     .foregroundColor(.orange)
             }
@@ -252,7 +272,7 @@ struct GoalRowView: View {
     }
 
     private var urgencyColor: Color {
-        switch goal.urgencyColor {
+        switch row.urgency {
         case .red: return .red
         case .orange: return .orange
         case .blue: return .blue
