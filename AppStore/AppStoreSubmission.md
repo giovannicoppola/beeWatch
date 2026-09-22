@@ -6,9 +6,9 @@ from you; everything else is done and verified in the repo.
 
 **Status (2026-09-22):** the build side is finished — a signed App Store IPA
 containing all three bundles builds and exports cleanly from the command line
-(see §6). **One hard blocker remains:** the support and privacy URLs are not
-published (§3). Beyond that it's human work: screenshots, a demo account, and
-pasting the metadata into App Store Connect.
+(see §6) — and the screenshots are captured (§8). **One hard blocker remains:**
+the support and privacy URLs are not published (§3). After that it's a demo
+account and pasting the metadata into App Store Connect.
 
 - **App name (internal):** beeWatch
 - **Bundle ID (iOS app):** `com.beewatch.ios`
@@ -291,47 +291,73 @@ Not required. Skip for 1.0.
 
 ---
 
-## 8. How to actually capture the screenshots
+## 8. How the screenshots were captured (verified recipe)
 
-I can't produce store-ready, *real* screenshots autonomously in this environment
-because the app needs a configured account (live Beeminder data) and, for
-complications, a watch face that has the complication added — which the simulator
-doesn't let you script. Fabricating UI images and passing them off as real
-screenshots would also violate App Store Review Guideline 2.3.3. So here's the
-reliable path:
+Four shots are in `AppStore/screenshots/`, captured 2026-09-22 from the running
+app against live Beeminder data, at native resolution — no scaling or retouching,
+which is what Guideline 2.3.3 requires.
 
-**Simulator route (fastest, no device needed):**
-1. Boot simulators:
-   ```
-   xcrun simctl boot "iPhone 16 Pro Max"
-   xcrun simctl boot "Apple Watch Ultra 2 (49mm)"
-   ```
-2. Build & run each scheme from Xcode onto those simulators.
-3. Configure the app once (paste the demo API key) so real goals load.
-4. Navigate to each screen in the shot list and capture:
-   ```
-   xcrun simctl io booted screenshot ~/Desktop/shot.png
-   ```
-   (Targets the focused simulator; run per device.)
-5. **Complications on the simulator:** in the watch simulator, click the Digital
-   Crown → long-press the face → **Edit** → add the beeWatch complication, then
-   screenshot the face. This is a manual UI step.
+| File | Size | Shows |
+|---|---|---|
+| `iphone/01-settings-connected.png` | 1320×2868 | Settings with the green "You're all set!" banner, Connected status, masked key |
+| `watch/01-goal-list.png` | 410×502 | Goal list sorted by urgency |
+| `watch/02-goal-detail.png` | 410×502 | Goal detail: buffer, need, rate, quick-entry buttons |
+| `watch/03-confirm.png` | 410×502 | The "Log 1?" confirmation step |
 
-**Device route (best-looking, needed for a real watch face):** run on your own
-Apple Watch, set up the complication on your real face, and use the Watch's
-screenshot (enable in Settings → General → Screenshots; press Crown + side
-button). AirDrop to Mac.
+To redo them (e.g. for a later release):
 
-Either way, drop the finished PNGs into `AppStore/screenshots/iphone/` and
-`AppStore/screenshots/watch/` (folders created for you), then upload to ASC.
+```sh
+WATCH=$(xcrun simctl list devices available | grep "Apple Watch Ultra 2 (49mm)" | head -1 | sed 's/.*(\([0-9A-F-]*\)).*/\1/')
+IPHONE=$(xcrun simctl list devices available | grep "iPhone 16 Pro Max" | head -1 | sed 's/.*(\([0-9A-F-]*\)).*/\1/')
 
-> Ask me to drive the simulator capture for the app screens (list, detail,
-> confirm, success) once you've booted a simulator and pasted the **demo** API key
-> into it — I can navigate and capture from there. The
-> **complication-on-a-face** shots realistically need your own watch, or the
-> manual Edit-face step above.
+xcrun simctl boot "$WATCH"; xcrun simctl boot "$IPHONE"
 
----
+# build for the simulators
+xcodebuild -project beeWatch.xcodeproj -scheme "beeWatch Watch App" -configuration Debug \
+  -destination "id=$WATCH" -derivedDataPath build/sim CODE_SIGNING_ALLOWED=NO build
+xcodebuild -project beeWatch.xcodeproj -scheme beeWatch -configuration Debug \
+  -destination "id=$IPHONE" -derivedDataPath build/sim-ios CODE_SIGNING_ALLOWED=NO build
+
+xcrun simctl install "$WATCH"  build/sim/Build/Products/Debug-watchsimulator/"beeWatch Watch App.app"
+xcrun simctl install "$IPHONE" build/sim-ios/Build/Products/Debug-iphonesimulator/beeWatch.app
+
+# skip the setup screen by seeding the key directly
+xcrun simctl spawn "$WATCH"  defaults write com.beewatch.ios.watchkitapp com.beewatch.apikey "<KEY>"
+xcrun simctl spawn "$IPHONE" defaults write com.beewatch.ios            com.beewatch.apikey "<KEY>"
+
+# clean status bar (iOS only — watchOS rejects this command)
+xcrun simctl status_bar "$IPHONE" override --time "9:41" --dataNetwork wifi \
+  --wifiMode active --wifiBars 3 --cellularMode active --cellularBars 4 \
+  --batteryState charged --batteryLevel 100
+
+xcrun simctl launch "$WATCH" com.beewatch.ios.watchkitapp
+xcrun simctl launch "$IPHONE" com.beewatch.ios
+xcrun simctl io "$WATCH"  screenshot watch.png    # 410x502
+xcrun simctl io "$IPHONE" screenshot iphone.png   # 1320x2868
+```
+
+`simctl` has no tap command. Taps were driven with AppleScript against the
+Simulator window (`tell application "System Events" to click at {x, y}`), which
+needs Accessibility permission for whatever runs it. Mapping a point from a watch
+screenshot to screen coordinates, given the window origin from
+`position of window`:
+
+    x_screen = win_x + (x_shot + 93) / 2
+    y_screen = win_y + (y_shot + 195) / 2
+
+Recalibrate the offsets if the window is moved or the device changes.
+
+### Still missing
+
+- **"Logged!" success overlay** — reaching it means actually submitting a
+  datapoint, so it needs the demo account rather than a real goal.
+- **Complication on a watch face** — the face editor isn't scriptable. Either
+  long-press the face in the simulator → Edit → add the beeWatch complication,
+  or (better looking) screenshot your own watch and AirDrop it over.
+
+> Note: the committed shots show real goals from the `giovanni` Beeminder
+> account. Accepted deliberately. If you ever want them generic, recapture
+> against the demo account with the recipe above.
 
 ## 9. Pre-submission checklist
 
@@ -350,7 +376,8 @@ Left to do — these need you:
 
 - [ ] ⛔ **Publish the site** — Pages is not enabled and the repo is private, so both required URLs 404. See the blocker in §3.
 - [ ] **Demo Beeminder account** — create one with a few sample goals; put its username + API key in Review Notes (§5). *Do not use your personal key.*
-- [ ] **Screenshots** — ≥1 iPhone (6.9"), ≥1 Apple Watch, ideally including a complication-on-face shot (§7b, §8)
+- [x] **Screenshots** — 1 iPhone + 3 Apple Watch captured and committed (§8)
+- [ ] *Optional:* complication-on-face shot and the "Logged!" overlay (§8, "Still missing")
 - [ ] Create the app record in App Store Connect and paste the §1/§2 metadata
 - [ ] Answer App Privacy as "no data collected" (§4) and the age questionnaire (all "None" → 4+)
 - [ ] Set price (Free)
