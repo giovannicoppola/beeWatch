@@ -6,8 +6,9 @@ from you; everything else is done and verified in the repo.
 
 **Status (2026-09-22):** the build side is finished — a signed App Store IPA
 containing all three bundles builds and exports cleanly from the command line
-(see §6). What's left is human work: screenshots, a demo account, and pasting the
-metadata into App Store Connect.
+(see §6). **One hard blocker remains:** the support and privacy URLs are not
+published (§3). Beyond that it's human work: screenshots, a demo account, and
+pasting the metadata into App Store Connect.
 
 - **App name (internal):** beeWatch
 - **Bundle ID (iOS app):** `com.beewatch.ios`
@@ -101,24 +102,37 @@ at the bottom.)
 
 | Field | Value | Status |
 |---|---|---|
-| **Support URL** (required) | `https://giovannicoppola.github.io/beeWatch/support.html` | ✅ Written — `docs/support.html`. Goes live on the next push to the Pages branch. |
-| **Marketing URL** (optional) | `https://giovannicoppola.github.io/beeWatch/` | ✅ Existing landing page. |
-| **Privacy Policy URL** (required) | `https://giovannicoppola.github.io/beeWatch/privacy.html` | ✅ Written — `docs/privacy.html`. Goes live on the next push. |
+| **Support URL** (required) | `https://giovannicoppola.github.io/beeWatch/support.html` | ⛔ **BLOCKED** — page written (`docs/support.html`), but Pages is not enabled. |
+| **Marketing URL** (optional) | `https://giovannicoppola.github.io/beeWatch/` | ⛔ **BLOCKED** — same reason. This site has never actually been published. |
+| **Privacy Policy URL** (required) | `https://giovannicoppola.github.io/beeWatch/privacy.html` | ⛔ **BLOCKED** — page written (`docs/privacy.html`), Pages not enabled. |
 
-Both pages are plain HTML reusing the site's `style.css`, linked from the landing
-page's nav and footer. The support page's contact channel is **GitHub Issues**
-(`github.com/giovannicoppola/beeWatch/issues`) — chosen over a personal email so
-the address isn't published for scraping. Apple accepts an issue tracker as a
-support channel, but the repo must stay **public** and you must actually answer
-there.
+### ⛔ Blocker: the site is not published
 
-`AppStore/PrivacyPolicy.md` is kept as the Markdown source of the same text —
-edit it and `docs/privacy.html` together.
+Verified 2026-09-22: the repo is **private**, `has_pages` is **false**, and all
+three URLs return 404. The pages exist in `docs/` and render correctly, but
+nothing serves them. **You cannot submit until these two URLs resolve** — a dead
+privacy or support URL is a standard rejection.
 
-> ⚠️ ACTION — after pushing, confirm both URLs load over HTTPS before you submit.
-> A dead support URL is a routine rejection.
+There is a second problem behind the first: the support page's contact channel is
+**GitHub Issues**, which a reviewer cannot reach on a private repo.
 
----
+Pick one:
+
+1. **Make the repo public, enable Pages from `main` → `/docs`.** Free, fixes both
+   URLs and the Issues contact in one move. Checked: the Beeminder API key is
+   **not** in any tracked file or in git history (it lives in the untracked
+   `CLAUDE.md`), so going public leaks nothing. Add `CLAUDE.md` to `.gitignore`
+   first so it can't be committed later.
+2. **Keep the repo private, host `docs/` elsewhere** (Cloudflare Pages, Netlify,
+   or a separate public repo containing only `docs/`). Then the support contact
+   must change from GitHub Issues to an email address, since private Issues stay
+   unreachable.
+3. **Keep it private and pay for Pages.** Pages from a private repo needs a paid
+   plan, and it still leaves the Issues contact unreachable — so this solves the
+   least for the most money.
+
+Whichever you choose, update the URLs above, and re-check them over HTTPS before
+submitting.
 
 ## 4. App Privacy ("nutrition label")
 
@@ -328,13 +342,13 @@ Done in the repo:
 - [x] Export compliance key (`ITSAppUsesNonExemptEncryption = false`) in all bundles
 - [x] App group `group.com.beewatch` registered and in the distribution entitlements
 - [x] Signed App Store IPA builds and exports from the command line (§6)
-- [x] Privacy policy page written (`docs/privacy.html`)
-- [x] Support page written (`docs/support.html`), linked from the landing page
+- [x] Privacy policy page *written* (`docs/privacy.html`) — not yet served
+- [x] Support page *written* (`docs/support.html`), linked from the landing page — not yet served
 - [x] App name, subtitle, description, keywords finalised (§1, §2)
 
 Left to do — these need you:
 
-- [ ] **Push the repo** so the Pages site publishes `/support.html` and `/privacy.html`; load both over HTTPS to confirm
+- [ ] ⛔ **Publish the site** — Pages is not enabled and the repo is private, so both required URLs 404. See the blocker in §3.
 - [ ] **Demo Beeminder account** — create one with a few sample goals; put its username + API key in Review Notes (§5). *Do not use your personal key.*
 - [ ] **Screenshots** — ≥1 iPhone (6.9"), ≥1 Apple Watch, ideally including a complication-on-face shot (§7b, §8)
 - [ ] Create the app record in App Store Connect and paste the §1/§2 metadata
