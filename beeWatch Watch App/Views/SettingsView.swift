@@ -20,6 +20,7 @@ struct SettingsView: View {
                     } else {
                         instructionsSection
                     }
+                    versionFooter
                 }
                 .padding()
             }
@@ -176,6 +177,12 @@ struct SettingsView: View {
         }
         .buttonStyle(.bordered)
         .tint(.red)
+    }
+
+    private var versionFooter: some View {
+        Text("v\(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "?") (\(Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "?"))")
+            .font(.caption2)
+            .foregroundColor(.secondary)
     }
 
     private func syncFromPhone() {
