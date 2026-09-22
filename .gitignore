@@ -6,3 +6,11 @@
 
 # Xcode user-specific state (UI layout, breakpoints) — not needed in the repo
 *.xcuserstate
+
+# Claude Code project instructions — contains the personal Beeminder API key
+CLAUDE.md
+
+# Build output
+build/
+*.xcarchive
+*.ipa
