@@ -1,6 +1,9 @@
 # Privacy Policy — beeWatch
 
-_Last updated: 2026-07-01_
+_Last updated: 2026-09-22_
+
+> **Published at:** https://giovannicoppola.github.io/beeWatch/privacy.html
+> (source: `docs/privacy.html` — edit both together)
 
 beeWatch ("the app") is an independent, third-party client for Beeminder. This
 policy explains what the app does with your information. It is written to be
@@ -45,7 +48,8 @@ accurate for the app as shipped; if the app changes, this policy will be updated
 - Updates will be posted at this URL with a revised "Last updated" date.
 
 ## Contact
-- Questions about this policy or the app: **<your support email>**.
+- Questions about this policy or the app: open an issue at
+  **https://github.com/giovannicoppola/beeWatch/issues**.
 
 _"Beeminder" is a trademark of Beeminder Corp. beeWatch is not affiliated with,
 endorsed by, or sponsored by Beeminder Corp._

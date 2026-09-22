@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy - BeeWatch</title>
+    <meta name="description" content="BeeWatch privacy policy: no servers, no analytics, no data collection. Your Beeminder API key stays on your devices.">
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .doc { max-width: 760px; margin: 0 auto; padding: 3rem 1.5rem 4rem; }
+        .doc h1 { font-size: 2.25rem; margin-bottom: .5rem; }
+        .doc .updated { color: var(--text-lighter); margin-bottom: 2.5rem; }
+        .doc h2 { font-size: 1.35rem; margin: 2.5rem 0 .75rem; text-align: left; }
+        .doc p, .doc li { color: var(--text-light); line-height: 1.7; }
+        .doc ul { margin: .5rem 0 0 1.25rem; }
+        .doc li { margin-bottom: .6rem; }
+        .doc strong { color: var(--text); }
+        .doc .lede { font-size: 1.05rem; color: var(--text); }
+        .doc .note { margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--border);
+                     font-size: .9rem; color: var(--text-lighter); }
+        .doc a:not(.btn) { color: var(--primary-dark); }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <a class="nav-brand" href="index.html" style="text-decoration:none;color:inherit;">
+            <span class="logo">&#128029;</span>
+            <span class="brand-name">BeeWatch</span>
+        </a>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="support.html">Support</a>
+            <a href="https://github.com/giovannicoppola/beeWatch" class="btn btn-outline">GitHub</a>
+        </div>
+    </nav>
+
+    <main class="doc">
+        <h1>Privacy Policy</h1>
+        <p class="updated">Last updated: 22 September 2026</p>
+
+        <p class="lede">BeeWatch is an independent, third-party client for Beeminder. This policy
+        explains what the app does with your information. It describes the app as shipped; if the
+        app changes, this policy will be updated.</p>
+
+        <h2>The short version</h2>
+        <ul>
+            <li>BeeWatch has <strong>no servers of its own</strong> and <strong>no analytics or advertising</strong>.</li>
+            <li>The only place your data goes is <strong>Beeminder</strong>, at your direction, to show your goals and log your datapoints.</li>
+            <li>Your Beeminder <strong>API key</strong> is stored <strong>on your device</strong> and shared only between your own iPhone and Apple Watch.</li>
+        </ul>
+
+        <h2>What the app stores</h2>
+        <ul>
+            <li><strong>Beeminder API key.</strong> Stored locally on your device (and in a shared app
+            group so the watch app and its complications can use it). It is synced between your own
+            iPhone and Apple Watch using Apple's WatchConnectivity. It is never sent to the developer
+            or to any third party other than Beeminder itself, as the authentication token on your
+            Beeminder API requests.</li>
+            <li><strong>App preferences</strong> &mdash; for example reminder settings and your most
+            frequent entry values. Stored locally on your device.</li>
+        </ul>
+
+        <h2>What the app sends, and to whom</h2>
+        <ul>
+            <li><strong>The Beeminder API</strong> (<a href="https://www.beeminder.com">www.beeminder.com</a>).
+            The app makes requests to Beeminder to fetch your goals and datapoints and to submit new
+            datapoints. These requests include your API key and travel over HTTPS. Your use of
+            Beeminder is governed by Beeminder's own privacy policy and terms.</li>
+        </ul>
+
+        <h2>What the developer collects</h2>
+        <p><strong>Nothing.</strong> The developer operates no backend and receives no personal data,
+        usage data, or diagnostics from the app.</p>
+
+        <h2>Data retention and deletion</h2>
+        <p>Because data is stored only on your device, you can remove it at any time by deleting the
+        app, or by clearing the API key in the app's Settings. Data held in your Beeminder account is
+        managed through Beeminder.</p>
+
+        <h2>Children</h2>
+        <p>The app is rated 4+ and does not knowingly collect information from children. It collects
+        no personal information at all.</p>
+
+        <h2>Changes to this policy</h2>
+        <p>Updates will be posted at this URL with a revised "Last updated" date.</p>
+
+        <h2>Contact</h2>
+        <p>Questions about this policy or the app:
+        <a href="https://github.com/giovannicoppola/beeWatch/issues">open an issue on GitHub</a>.</p>
+
+        <p class="note">"Beeminder" is a trademark of Beeminder Corp. BeeWatch is not affiliated with,
+        endorsed by, or sponsored by Beeminder Corp.</p>
+    </main>
+</body>
+</html>

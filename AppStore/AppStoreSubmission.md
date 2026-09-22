@@ -1,14 +1,19 @@
 # beeWatch — App Store Submission Package
 
 Everything needed to submit **beeWatch** to the App Store. Copy the text fields
-straight into App Store Connect. Items marked **⚠️ ACTION** need a decision or an
-asset from you before you can submit.
+straight into App Store Connect. Items marked **⚠️ ACTION** still need something
+from you; everything else is done and verified in the repo.
+
+**Status (2026-09-22):** the build side is finished — a signed App Store IPA
+containing all three bundles builds and exports cleanly from the command line
+(see §6). What's left is human work: screenshots, a demo account, and pasting the
+metadata into App Store Connect.
 
 - **App name (internal):** beeWatch
 - **Bundle ID (iOS app):** `com.beewatch.ios`
 - **Bundle ID (watch app):** `com.beewatch.ios.watchkitapp`
 - **Bundle ID (complications ext.):** `com.beewatch.ios.watchkitapp.complications`
-- **Version / Build:** 1.0 / 1
+- **Version / Build:** 1.0 / 2
 - **Primary platform:** iOS + watchOS (Apple Watch app with WidgetKit complications)
 
 > beeWatch is an independent, third-party client for **Beeminder**. The metadata
@@ -22,13 +27,13 @@ asset from you before you can submit.
 
 | Field | Value | Notes |
 |---|---|---|
-| **App Name** | `beeWatch for Beeminder` | 22/30 chars. Alt: just `beeWatch` if you want to avoid the descriptor. |
+| **App Name** | `beeWatch for Beeminder` | 22/30 chars. **Chosen** — nominative use, helps people searching "Beeminder" find it. |
 | **Subtitle** | `Beeminder goals on your wrist` | 29/30 chars. |
 | **Primary category** | Productivity | |
 | **Secondary category** | Health & Fitness | Optional; fits habit/goal tracking. |
 | **Content rights** | Does **not** contain third-party content | You wrote all the code/copy. |
 | **Age rating** | 4+ | No objectionable content. Answer "None" to all questionnaire items. |
-| **Price** | Free (Tier 0) | ⚠️ ACTION — confirm; set in Pricing. |
+| **Price** | Free | ⚠️ ACTION — confirm; set in Pricing. |
 | **Copyright** | `2026 Giovanni Coppola` | Format ASC expects: `YYYY Name`. |
 
 ### Localizations
@@ -74,11 +79,13 @@ Not affiliated with, endorsed by, or sponsored by Beeminder Corp. "Beeminder" is
 
 ### Keywords (max 100 chars, comma-separated, no spaces)
 ```
-beeminder,goal,goals,habit,tracker,quantified,akrasia,productivity,complication,streak,data,log
+goal,goals,habit,tracker,quantified,akrasia,productivity,complication,streak,datapoint,log
 ```
-(96 chars — count it after any edit; ASC counts commas.)
-> Don't repeat words already in the app name/subtitle ("beeWatch", "wrist") —
-> Apple indexes those separately. Avoid "watch"/"apple" (ignored/blocked).
+(90 chars — count it after any edit; ASC counts commas.)
+> "beeminder" was dropped from this list on purpose: it's now in the **app name**,
+> and Apple indexes name and keywords separately — repeating it wastes characters.
+> Same reason "beeWatch" and "wrist" aren't here. Avoid "watch"/"apple"
+> (ignored/blocked).
 
 ### What's New in This Version (max 4000 chars)
 For the initial 1.0 release, ASC uses the Description; you can put a short line:
@@ -94,13 +101,22 @@ at the bottom.)
 
 | Field | Value | Status |
 |---|---|---|
-| **Support URL** (required) | e.g. `https://giovannicoppola.github.io/beeWatch/` | ⚠️ ACTION — you have a `docs/` GitHub Pages site; confirm it has a support/contact section, or add one. |
-| **Marketing URL** (optional) | same as above or a dedicated page | Optional. |
-| **Privacy Policy URL** (required) | host `AppStore/PrivacyPolicy.md` content as a web page | ⚠️ ACTION — publish the included privacy policy and paste its URL. |
+| **Support URL** (required) | `https://giovannicoppola.github.io/beeWatch/support.html` | ✅ Written — `docs/support.html`. Goes live on the next push to the Pages branch. |
+| **Marketing URL** (optional) | `https://giovannicoppola.github.io/beeWatch/` | ✅ Existing landing page. |
+| **Privacy Policy URL** (required) | `https://giovannicoppola.github.io/beeWatch/privacy.html` | ✅ Written — `docs/privacy.html`. Goes live on the next push. |
 
-A ready-to-publish policy is in `AppStore/PrivacyPolicy.md`. The simplest path:
-drop it into your existing `docs/` Jekyll site (rename to `privacy.md` with front
-matter) so it's served at `…/privacy`.
+Both pages are plain HTML reusing the site's `style.css`, linked from the landing
+page's nav and footer. The support page's contact channel is **GitHub Issues**
+(`github.com/giovannicoppola/beeWatch/issues`) — chosen over a personal email so
+the address isn't published for scraping. Apple accepts an issue tracker as a
+support channel, but the repo must stay **public** and you must actually answer
+there.
+
+`AppStore/PrivacyPolicy.md` is kept as the Markdown source of the same text —
+edit it and `docs/privacy.html` together.
+
+> ⚠️ ACTION — after pushing, confirm both URLs load over HTTPS before you submit.
+> A dead support URL is a routine rejection.
 
 ---
 
@@ -136,7 +152,7 @@ collected by the developer.*
 |---|---|
 | **Sign-in required?** | Yes — the app needs a Beeminder API key. |
 | **Demo account** | ⚠️ ACTION — create a **dedicated demo Beeminder account** with a few sample goals and provide its **username + API key** here. **Do NOT use your personal key.** |
-| **Contact** | Your name, email, phone (for the review team). |
+| **Contact** | Your name, email, phone. This is private to the review team — unlike the public support URL, it's fine to give your real email here. |
 | **Notes** | Use the block below. |
 
 ### Review notes (paste into "Notes")
@@ -158,25 +174,66 @@ Demo API key: <DEMO_API_KEY>
 
 ## 6. Build, compliance & signing
 
-| Item | Value / Action |
-|---|---|
-| **Export compliance** | App uses only standard HTTPS (Beeminder API over TLS). In Info.plist you can set `ITSAppUsesNonExemptEncryption = NO` to skip the per-build prompt. ⚠️ ACTION — add that key, or answer "No" to the "non-exempt encryption" question at upload. |
-| **Bitcode** | N/A (deprecated). |
-| **Signing** | Distribution certificate + App Store provisioning profiles for all three bundle IDs (app, watch app, complications extension). Xcode "Automatically manage signing" handles this. |
-| **App group** | `group.com.beewatch` must be in the App IDs' capabilities for all targets (used for the complication cache). ⚠️ Verify it's registered on the portal. |
-| **Upload** | Archive the **iOS app** scheme (the watch app + complications are embedded and go up in the same archive) → Distribute App → App Store Connect. |
+All of this is **done and verified** — a signed App Store IPA has been built and
+exported end to end.
 
----
+| Item | Status |
+|---|---|
+| **Version / build** | 1.0 (2), identical across all three bundles. The watch app and complications used to hardcode `1.0`/`1` in their `Info.plist`, so bumping the build number in the project never reached them — they now read `$(MARKETING_VERSION)` / `$(CURRENT_PROJECT_VERSION)`. A mismatch here is an automatic upload rejection. |
+| **Export compliance** | ✅ `ITSAppUsesNonExemptEncryption = false` is present in all three built bundles (iOS via `INFOPLIST_KEY_…`, watch + complications in their plists). No per-upload prompt. |
+| **Signing** | ✅ Archive + export succeed. All three bundles sign with **Apple Distribution: Giovanni Coppola (VDG762YNX9)** using the *iOS Team Store Provisioning Profile* for each bundle ID (valid to 2027-01-29). |
+| **App group** | ✅ `group.com.beewatch` is registered on all three App IDs and present in the distribution entitlements of the watch app and the complications extension. |
+| **App icon** | ✅ 1024×1024, no alpha, in all three asset catalogs; `CFBundleIconName` set in every built bundle. |
+| **Upload** | Archive the **iOS app** scheme — the watch app and complications are embedded and go up in the same archive. |
+
+### Build it yourself (verified commands)
+
+```sh
+cd ~/github/beeWatch
+
+xcodebuild -project beeWatch.xcodeproj -scheme beeWatch -configuration Release \
+  -destination 'generic/platform=iOS' \
+  -archivePath build/beeWatch.xcarchive \
+  -allowProvisioningUpdates archive
+
+xcodebuild -exportArchive \
+  -archivePath build/beeWatch.xcarchive \
+  -exportPath build/export \
+  -exportOptionsPlist AppStore/ExportOptions.plist \
+  -allowProvisioningUpdates
+```
+
+`-allowProvisioningUpdates` is required: it lets Xcode refresh the profiles. Without
+it the archive fails, because the only Apple Development certificate in the local
+keychain ("Created via API") isn't in the team development profiles. That doesn't
+affect distribution — the export re-signs everything with Apple Distribution.
+
+Then upload `build/export/beeWatch.ipa` with Xcode's Organizer, Transporter, or:
+
+```sh
+xcrun altool --upload-app -f build/export/beeWatch.ipa -t ios \
+  --apiKey <KEY_ID> --apiIssuer <ISSUER_ID>
+```
+
+**Bump the build number for every upload** — App Store Connect rejects a build
+number it has already seen. It lives in `beeWatch.xcodeproj/project.pbxproj`
+(`CURRENT_PROJECT_VERSION`, 6 occurrences) and `project.yml` (3 occurrences); keep
+the two in sync, since `project.yml` is the XcodeGen source — they were verified
+to agree by regenerating into a scratch copy. The watch Settings
+screen shows the running version and build, which is the quick way to confirm the
+watch is running the build you think it is.
 
 ## 7. Required assets & specs
 
 ### 7a. App icon (marketing)
 - **1024 × 1024 px**, PNG or JPG, **no alpha channel, no transparency, no rounded
   corners** (Apple rounds it).
-- Source art exists: `Gemini_Generated_Image_bwbopcbwbopcbwbo.png`. ⚠️ ACTION —
-  export a flattened 1024² with no alpha. (The in-app icon set lives in
-  `Assets.xcassets`; the 1024 marketing icon is uploaded/embedded via the asset
-  catalog's App Icon "App Store" slot.)
+- ✅ **Done.** All three asset catalogs carry a flattened 1024² `AppIcon.png` with
+  no alpha, and every built bundle has `CFBundleIconName` set. ASC picks the
+  marketing icon up from the uploaded build — there's nothing to upload by hand.
+- Source art: `Gemini_Generated_Image_bwbopcbwbopcbwbo.png` (that original *does*
+  have an alpha channel — keep using the flattened copies in `Assets.xcassets`,
+  not the source, anywhere Apple asks for an icon).
 
 ### 7b. Screenshots — **the reality check**
 App Store Connect has **two** screenshot sets for this app: **iPhone** and
@@ -254,30 +311,37 @@ button). AirDrop to Mac.
 Either way, drop the finished PNGs into `AppStore/screenshots/iphone/` and
 `AppStore/screenshots/watch/` (folders created for you), then upload to ASC.
 
-> Want me to drive the simulator capture for the app screens (list, detail,
-> confirm, success)? I can attempt it if you first paste a demo API key into a
-> booted simulator — but the **complication-on-a-face** shots realistically need
-> your device or the manual Edit-face step above.
+> Ask me to drive the simulator capture for the app screens (list, detail,
+> confirm, success) once you've booted a simulator and pasted the **demo** API key
+> into it — I can navigate and capture from there. The
+> **complication-on-a-face** shots realistically need your own watch, or the
+> manual Edit-face step above.
 
 ---
 
 ## 9. Pre-submission checklist
 
-- [ ] App icon 1024² (no alpha) exported and set in the asset catalog
-- [ ] iPhone screenshots (≥1, 6.9")
-- [ ] Apple Watch screenshots (≥1), including complication-on-face shot(s)
-- [ ] Name / subtitle / promo / description / keywords pasted
-- [ ] Support URL live
-- [ ] Privacy Policy URL live (see `PrivacyPolicy.md`)
-- [ ] App Privacy answers completed (see §4)
-- [ ] Demo Beeminder account created; username + key in Review Notes
-- [ ] Export compliance handled (`ITSAppUsesNonExemptEncryption = NO`)
-- [ ] App group `group.com.beewatch` registered for all targets
-- [ ] Build 1.0 (1) uploaded and attached to the version
-- [ ] Age rating questionnaire answered (all "None" → 4+)
-- [ ] Price set (Free)
+Done in the repo:
 
----
+- [x] App icon 1024² (no alpha) in all three asset catalogs
+- [x] Version/build consistent across all bundles — 1.0 (2)
+- [x] Export compliance key (`ITSAppUsesNonExemptEncryption = false`) in all bundles
+- [x] App group `group.com.beewatch` registered and in the distribution entitlements
+- [x] Signed App Store IPA builds and exports from the command line (§6)
+- [x] Privacy policy page written (`docs/privacy.html`)
+- [x] Support page written (`docs/support.html`), linked from the landing page
+- [x] App name, subtitle, description, keywords finalised (§1, §2)
+
+Left to do — these need you:
+
+- [ ] **Push the repo** so the Pages site publishes `/support.html` and `/privacy.html`; load both over HTTPS to confirm
+- [ ] **Demo Beeminder account** — create one with a few sample goals; put its username + API key in Review Notes (§5). *Do not use your personal key.*
+- [ ] **Screenshots** — ≥1 iPhone (6.9"), ≥1 Apple Watch, ideally including a complication-on-face shot (§7b, §8)
+- [ ] Create the app record in App Store Connect and paste the §1/§2 metadata
+- [ ] Answer App Privacy as "no data collected" (§4) and the age questionnaire (all "None" → 4+)
+- [ ] Set price (Free)
+- [ ] Upload build 1.0 (2) and attach it to the version
+- [ ] Submit for review
 
 ## Trademark & rights
 - "Beeminder" is a trademark of **Beeminder Corp.** Using "for Beeminder" as a

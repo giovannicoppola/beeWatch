@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Support - BeeWatch</title>
+    <meta name="description" content="Get help with BeeWatch: setup, API keys, complications, reminders, and how to report a bug.">
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .doc { max-width: 760px; margin: 0 auto; padding: 3rem 1.5rem 4rem; }
+        .doc h1 { font-size: 2.25rem; margin-bottom: .5rem; }
+        .doc .lede { font-size: 1.05rem; color: var(--text); margin-bottom: 2.5rem; }
+        .doc h2 { font-size: 1.35rem; margin: 2.5rem 0 .75rem; text-align: left; }
+        .doc h3 { font-size: 1.05rem; margin: 1.5rem 0 .4rem; }
+        .doc p, .doc li { color: var(--text-light); line-height: 1.7; }
+        .doc ol, .doc ul { margin: .5rem 0 0 1.25rem; }
+        .doc li { margin-bottom: .6rem; }
+        .doc strong { color: var(--text); }
+        .doc a:not(.btn) { color: var(--primary-dark); }
+        .doc .cta { display: inline-block; margin-top: 1rem; }
+        .doc .note { margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--border);
+                     font-size: .9rem; color: var(--text-lighter); }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <a class="nav-brand" href="index.html" style="text-decoration:none;color:inherit;">
+            <span class="logo">&#128029;</span>
+            <span class="brand-name">BeeWatch</span>
+        </a>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="privacy.html">Privacy</a>
+            <a href="https://github.com/giovannicoppola/beeWatch" class="btn btn-outline">GitHub</a>
+        </div>
+    </nav>
+
+    <main class="doc">
+        <h1>Support</h1>
+        <p class="lede">Questions, bugs, and feature requests for BeeWatch &mdash; the Apple Watch app
+        for logging your Beeminder goals.</p>
+
+        <h2>Get in touch</h2>
+        <p>The fastest way to reach the developer is to open an issue on GitHub. Bugs, questions and
+        ideas are all welcome, and you'll get a reply there.</p>
+        <p><a class="btn btn-primary cta" href="https://github.com/giovannicoppola/beeWatch/issues/new">Open an issue</a></p>
+        <p>When reporting a bug, it helps to include your watchOS version, the app version (shown at
+        the bottom of the watch app's Settings screen), and what you were doing when it happened.</p>
+
+        <h2>Setting up</h2>
+        <h3>Where do I find my Beeminder API key?</h3>
+        <p>Sign in to Beeminder in a browser and visit
+        <a href="https://www.beeminder.com/api/v1/auth_token.json">beeminder.com/api/v1/auth_token.json</a>.
+        The page shows your personal <code>auth_token</code>. The app links to this page from its
+        Settings screen.</p>
+
+        <h3>Do I need the iPhone app?</h3>
+        <p>No. The watch app works on its own &mdash; you can paste your API key directly into the
+        watch app's Settings. The iPhone app is there because typing a long key is easier on a phone;
+        enter it once there and it syncs to the watch.</p>
+
+        <h3>The key I entered on my iPhone hasn't reached my watch.</h3>
+        <p>Syncing uses Apple's WatchConnectivity, which needs both devices awake and paired. Open the
+        iPhone app, then open the watch app's Settings and tap the sync option. If it still doesn't
+        arrive, paste the key directly into the watch app's Settings &mdash; that always works.</p>
+
+        <h2>Using the app</h2>
+        <h3>How are goals ordered?</h3>
+        <p>By urgency: the goal closest to derailing is at the top, so the thing that needs you most
+        is the first thing you see.</p>
+
+        <h3>Where do the quick-entry buttons come from?</h3>
+        <p>They're built from your most frequent recent values for that goal, so repetitive check-ins
+        take a single tap. Log something unusual once and the buttons adapt over time.</p>
+
+        <h3>How do I add a complication?</h3>
+        <p>On your watch, press and hold the watch face, tap <strong>Edit</strong>, swipe to the
+        complications screen, tap a slot, and choose BeeWatch from the list.</p>
+
+        <h3>Why haven't I had a reminder?</h3>
+        <p>Reminders only fire when a goal actually needs data &mdash; that's deliberate. Check the
+        reminder settings in the app, and make sure notifications are allowed for BeeWatch in the
+        Watch app on your iPhone.</p>
+
+        <h2>Privacy</h2>
+        <p>BeeWatch has no servers and collects nothing. See the
+        <a href="privacy.html">privacy policy</a> for details.</p>
+
+        <p class="note">"Beeminder" is a trademark of Beeminder Corp. BeeWatch is not affiliated with,
+        endorsed by, or sponsored by Beeminder Corp.</p>
+    </main>
+</body>
+</html>
