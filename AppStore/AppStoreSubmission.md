@@ -155,6 +155,28 @@ collected by the developer.*
 
 ---
 
+## 4a. Age rating answers
+
+Answered 2026-09-22 over the API; the result is **4+**. Every content-frequency
+question is `NONE` and every capability question is `false`. The PATCH is atomic —
+App Store Connect requires all 22 required fields in a single request, and it
+mixes types: the frequency questions take a string enum
+(`NONE` / `INFREQUENT_OR_MILD` / `FREQUENT_OR_INTENSE` / `INFREQUENT` / `FREQUENT`)
+while the capability questions take booleans. `healthOrWellnessTopics` is a
+boolean despite reading like a frequency question.
+
+Three answers are judgement calls rather than facts. They look right, but they
+are declarations in your name, so check you agree:
+
+| Field | Answered | Reasoning |
+|---|---|---|
+| `healthOrWellnessTopics` | `false` | The app presents no health content of its own. It is a generic numeric tracker; a *user* may choose to track weight or exercise, but the app neither knows nor says anything about health. |
+| `userGeneratedContent` | `false` | Users enter datapoints and comments, but these go to their own Beeminder account. Nothing is shared with other users inside the app, so there is no UGC surface to moderate. |
+| `unrestrictedWebAccess` | `false` | The app opens two specific beeminder.com URLs in Safari. It embeds no browser and cannot reach arbitrary sites. |
+
+`socialMediaAgeRestricted` is left null, which is correct — it only applies when
+`socialMedia` is true, and that is false.
+
 ## 5. App Review Information
 
 | Field | Value |
