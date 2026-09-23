@@ -196,6 +196,12 @@ exported end to end.
 | **App icon** | ✅ 1024×1024, no alpha, in all three asset catalogs; `CFBundleIconName` set in every built bundle. |
 | **Upload** | Archive the **iOS app** scheme — the watch app and complications are embedded and go up in the same archive. |
 
+### Build and upload (verified end to end, 2026-09-22)
+
+Build 11 was produced and shipped with exactly these steps: archive → export →
+`--validate-app` (VERIFY SUCCEEDED) → `--upload-app` → poll until VALID → attach
+to the version. Processing took roughly three minutes.
+
 ### Build it yourself (verified commands)
 
 ```sh
@@ -218,12 +224,19 @@ it the archive fails, because the only Apple Development certificate in the loca
 keychain ("Created via API") isn't in the team development profiles. That doesn't
 affect distribution — the export re-signs everything with Apple Distribution.
 
-Then upload `build/export/beeWatch.ipa` with Xcode's Organizer, Transporter, or:
+Then validate and upload. Validating first is worth the extra minute — it catches
+the same problems the upload would, without burning a build number:
 
 ```sh
+xcrun altool --validate-app -f build/export/beeWatch.ipa -t ios \
+  --apiKey PCLQ5K922S --apiIssuer <ISSUER_ID>
+
 xcrun altool --upload-app -f build/export/beeWatch.ipa -t ios \
-  --apiKey <KEY_ID> --apiIssuer <ISSUER_ID>
+  --apiKey PCLQ5K922S --apiIssuer <ISSUER_ID>
 ```
+
+The key is read from `~/.appstoreconnect/private_keys/AuthKey_PCLQ5K922S.p8`. The
+Issuer ID is on the ASC Keys page; it is not stored anywhere on this machine.
 
 **Bump the build number for every upload** — App Store Connect rejects a build
 number it has already seen, and it has already seen 1 through 10. The repo now
@@ -389,8 +402,8 @@ Left to do — these need you:
 - [ ] Answer App Privacy as "no data collected" (§4) and the age questionnaire (all "None" → 4+)
 - [x] **Content Rights** — set to `DOES_NOT_USE_THIRD_PARTY_CONTENT`
 - [ ] Set price (Free)
-- [ ] Upload build **1.0 (11)** and attach it to the version — builds 1–10 exist but none is attached, and build 10 predates the version-propagation fix
-- [ ] Submit for review
+- [x] **Build 1.0 (11) uploaded and attached** — validated clean, processed to VALID, attached to version 1.0; `usesNonExemptEncryption` reads False, so no encryption prompt
+- [ ] **Submit for review** — the last step, and the only genuinely irreversible one
 
 ## Trademark & rights
 - "Beeminder" is a trademark of **Beeminder Corp.** Using "for Beeminder" as a
