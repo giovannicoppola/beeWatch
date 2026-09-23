@@ -15,7 +15,7 @@ privacy URLs are live (§3), and the metadata is pushed to App Store Connect.
 - **Bundle ID (iOS app):** `com.beewatch.ios`
 - **Bundle ID (watch app):** `com.beewatch.ios.watchkitapp`
 - **Bundle ID (complications ext.):** `com.beewatch.ios.watchkitapp.complications`
-- **Version / Build:** 1.0 / 2
+- **Version / Build:** 1.0 / 11  (builds 1–10 are already on ASC)
 - **Primary platform:** iOS + watchOS (Apple Watch app with WidgetKit complications)
 
 > beeWatch is an independent, third-party client for **Beeminder**. The metadata
@@ -160,8 +160,8 @@ collected by the developer.*
 | Field | Value |
 |---|---|
 | **Sign-in required?** | Yes — the app needs a Beeminder API key. |
-| **Demo account** | ⚠️ ACTION — create a **dedicated demo Beeminder account** with a few sample goals and provide its **username + API key** here. **Do NOT use your personal key.** |
-| **Contact** | Your name, email, phone. This is private to the review team — unlike the public support URL, it's fine to give your real email here. |
+| **Demo account** | ✅ Already set on the version: `testcore`, password stored, notes carry its Beeminder API key. Set up for the TestFlight beta and present on the App Store review detail too. |
+| **Contact** | ✅ Set 2026-09-22 (Giovanni Coppola, personal email and phone), copied from the TestFlight record. These are two **separate** resources in ASC — `betaAppReviewDetail` vs `appStoreReviewDetail` — and filling one does not fill the other. |
 | **Notes** | Use the block below. |
 
 ### Review notes (paste into "Notes")
@@ -189,7 +189,7 @@ exported end to end.
 | Item | Status |
 |---|---|
 | **ASC app record** | `beeWatch for Beeminder`, Apple ID 6758437141, version 1.0 in PREPARE_FOR_SUBMISSION. |
-| **Version / build** | 1.0 (2), identical across all three bundles. The watch app and complications used to hardcode `1.0`/`1` in their `Info.plist`, so bumping the build number in the project never reached them — they now read `$(MARKETING_VERSION)` / `$(CURRENT_PROJECT_VERSION)`. A mismatch here is an automatic upload rejection. |
+| **Version / build** | 1.0 (11), identical across all three bundles. The watch app and complications used to hardcode `1.0`/`1` in their `Info.plist`, so bumping the build number in the project never reached them — they now read `$(MARKETING_VERSION)` / `$(CURRENT_PROJECT_VERSION)`. **Correction:** an earlier draft claimed this mismatch causes an upload rejection. It does not — builds 1–10 uploaded fine with the watch bundles stuck at build 1. The real damage was on-device: watchOS skips reinstalling a bundle whose build number hasn't changed, which is the stale-install bug that kept resurfacing. |
 | **Export compliance** | ✅ `ITSAppUsesNonExemptEncryption = false` is present in all three built bundles (iOS via `INFOPLIST_KEY_…`, watch + complications in their plists). No per-upload prompt. |
 | **Signing** | ✅ Archive + export succeed. All three bundles sign with **Apple Distribution: Giovanni Coppola (VDG762YNX9)** using the *iOS Team Store Provisioning Profile* for each bundle ID (valid to 2027-01-29). |
 | **App group** | ✅ `group.com.beewatch` is registered on all three App IDs and present in the distribution entitlements of the watch app and the complications extension. |
@@ -226,7 +226,8 @@ xcrun altool --upload-app -f build/export/beeWatch.ipa -t ios \
 ```
 
 **Bump the build number for every upload** — App Store Connect rejects a build
-number it has already seen. It lives in `beeWatch.xcodeproj/project.pbxproj`
+number it has already seen, and it has already seen 1 through 10. The repo now
+reads 11; the next upload after that is 12. It lives in `beeWatch.xcodeproj/project.pbxproj`
 (`CURRENT_PROJECT_VERSION`, 6 occurrences) and `project.yml` (3 occurrences); keep
 the two in sync, since `project.yml` is the XcodeGen source — they were verified
 to agree by regenerating into a scratch copy. The watch Settings
@@ -379,14 +380,16 @@ Done in the repo:
 Left to do — these need you:
 
 - [x] **Site published** — repo public, Pages live on `main` → `/docs`; all three URLs verified 200 (§3)
-- [ ] **Demo Beeminder account** — create one with a few sample goals; put its username + API key in Review Notes (§5). *Do not use your personal key.*
+- [x] **Demo Beeminder account** — `testcore`, already on the version's review detail (§5)
+- [x] **Review contact info** — filled on the App Store review detail (§5)
 - [x] **Screenshots** — 1 iPhone + 3 Apple Watch captured, committed, and uploaded to ASC (§8)
 - [ ] Decide what to do with the two older screenshots already in ASC from 2026-01-29 (one 46mm watch, one iPhone) — they sit alongside the new ones; screenshot order sets which is the hero image
 - [ ] *Optional:* complication-on-face shot and the "Logged!" overlay (§8, "Still missing")
 - [x] App record exists (`beeWatch for Beeminder`, app id 6758437141) and the §1/§2 metadata is pushed and verified — via `AppStore/push-metadata.py`
 - [ ] Answer App Privacy as "no data collected" (§4) and the age questionnaire (all "None" → 4+)
+- [ ] Set **Content Rights** — currently unset on the app record (`contentRightsDeclaration: None`); the answer is "does not contain third-party content"
 - [ ] Set price (Free)
-- [ ] Upload build 1.0 (2) and attach it to the version
+- [ ] Upload build **1.0 (11)** and attach it to the version — builds 1–10 exist but none is attached, and build 10 predates the version-propagation fix
 - [ ] Submit for review
 
 ## Trademark & rights
