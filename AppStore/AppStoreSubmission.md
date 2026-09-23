@@ -15,7 +15,8 @@ privacy URLs are live (§3), and the metadata is pushed to App Store Connect.
 - **Bundle ID (iOS app):** `com.beewatch.ios`
 - **Bundle ID (watch app):** `com.beewatch.ios.watchkitapp`
 - **Bundle ID (complications ext.):** `com.beewatch.ios.watchkitapp.complications`
-- **Version / Build:** 1.0 / 11  (builds 1–10 are already on ASC)
+- **Version / Build:** 1.0 / 12  (builds 1–11 precede it on ASC)
+- **Devices:** iPhone + Apple Watch. **Not iPad** — see §6a.
 - **Primary platform:** iOS + watchOS (Apple Watch app with WidgetKit complications)
 
 > beeWatch is an independent, third-party client for **Beeminder**. The metadata
@@ -269,6 +270,22 @@ to agree by regenerating into a scratch copy. The watch Settings
 screen shows the running version and build, which is the quick way to confirm the
 watch is running the build you think it is.
 
+## 6a. Why the app is iPhone-only
+
+The iOS target originally built for `TARGETED_DEVICE_FAMILY = "1,2"`, so App
+Store Connect classified it as an iPad app and refused submission until 13-inch
+iPad screenshots were supplied.
+
+Adding those screenshots would have been the quick fix and the wrong one. The
+iPhone app exists almost entirely to pass the API key to the watch over
+WatchConnectivity, and **an iPad cannot pair with an Apple Watch** — `WCSession`
+is not supported there at all. An iPad user would reach a settings screen whose
+main function cannot work, which invites a minimum-functionality rejection.
+
+Build 12 sets `TARGETED_DEVICE_FAMILY = 1`; the built app reports
+`UIDeviceFamily [1]`, and the iPad screenshot requirement disappears. The
+watch targets stay at family 4.
+
 ## 7. Required assets & specs
 
 ### 7a. App icon (marketing)
@@ -399,6 +416,23 @@ in ASC and remove the old ones if they are not wanted.
 > account. Accepted deliberately. If you ever want them generic, recapture
 > against the demo account with the recipe above.
 
+## 8a. Fields that live somewhere non-obvious
+
+Five requirements surfaced only when "Add for Review" was pressed, because none
+of them sit next to the copy they relate to:
+
+| Requirement | Where it actually lives |
+|---|---|
+| Copyright | `appStoreVersions.copyright` — the version, not App Information |
+| Primary category | `appInfos` **relationship**, not an attribute; the id is the literal string `PRODUCTIVITY` |
+| Privacy Policy URL | `appInfoLocalizations.privacyPolicyUrl` — *not* the version localization that holds the support and marketing URLs |
+| Price | a separate `appPriceSchedule` resource; "free" means a manual price pointing at the USA price point whose `customerPrice` is `0.0` |
+| iPad screenshots | driven by the build's `UIDeviceFamily`, so it is fixed in the project, not in ASC (§6a) |
+
+A quirk worth remembering: `GET /v1/appInfos/{id}` returns relationship `data`
+only when you pass `?include=primaryCategory`. Without it the category reads
+`None` even when it is set, which looks like a failure and is not.
+
 ## 9. Pre-submission checklist
 
 Done in the repo:
@@ -423,8 +457,8 @@ Left to do — these need you:
 - [x] App record exists (`beeWatch for Beeminder`, app id 6758437141) and the §1/§2 metadata is pushed and verified — via `AppStore/push-metadata.py`
 - [ ] Answer App Privacy as "no data collected" (§4) and the age questionnaire (all "None" → 4+)
 - [x] **Content Rights** — set to `DOES_NOT_USE_THIRD_PARTY_CONTENT`
-- [ ] Set price (Free)
-- [x] **Build 1.0 (11) uploaded and attached** — validated clean, processed to VALID, attached to version 1.0; `usesNonExemptEncryption` reads False, so no encryption prompt
+- [x] Price set to Free
+- [x] **Build 1.0 (12) uploaded and attached** (11 superseded by the iPhone-only change) — validated clean, processed to VALID, attached to version 1.0; `usesNonExemptEncryption` reads False, so no encryption prompt
 - [ ] **Submit for review** — the last step, and the only genuinely irreversible one
 
 ## Trademark & rights
