@@ -45,11 +45,15 @@ wanted.
 
 ## 2. Metadata copy (paste into ASC)
 
+> `AppStore/push-metadata.py` holds this same copy as constants and writes it to
+> App Store Connect over the API, so it does not have to be pasted by hand.
+> **Edit both together**, or the doc and what ships will drift.
+
 ### Promotional text (max 170 chars — editable anytime without review)
 ```
 Log your Beeminder goals in a single tap, right from your wrist. See what's due, get reminders only when it matters, and keep a live complication on your watch face.
 ```
-(159 chars)
+(165 chars)
 
 ### Description (max 4000 chars)
 ```
