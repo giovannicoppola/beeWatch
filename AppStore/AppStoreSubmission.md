@@ -197,6 +197,7 @@ exported end to end.
 
 | Item | Status |
 |---|---|
+| **ASC app record** | `beeWatch for Beeminder`, Apple ID 6758437141, version 1.0 in PREPARE_FOR_SUBMISSION. |
 | **Version / build** | 1.0 (2), identical across all three bundles. The watch app and complications used to hardcode `1.0`/`1` in their `Info.plist`, so bumping the build number in the project never reached them — they now read `$(MARKETING_VERSION)` / `$(CURRENT_PROJECT_VERSION)`. A mismatch here is an automatic upload rejection. |
 | **Export compliance** | ✅ `ITSAppUsesNonExemptEncryption = false` is present in all three built bundles (iOS via `INFOPLIST_KEY_…`, watch + complications in their plists). No per-upload prompt. |
 | **Signing** | ✅ Archive + export succeed. All three bundles sign with **Apple Distribution: Giovanni Coppola (VDG762YNX9)** using the *iOS Team Store Provisioning Profile* for each bundle ID (valid to 2027-01-29). |
@@ -351,6 +352,14 @@ screenshot to screen coordinates, given the window origin from
 
 Recalibrate the offsets if the window is moved or the device changes.
 
+### Already in App Store Connect
+
+A read-back on 2026-09-22 found screenshots uploaded on 2026-01-29 that predate
+this work: one `APP_WATCH_SERIES_10` (416×496) and one `APP_IPHONE_67`
+(1320×2868). The new shots were added alongside them, nothing was deleted. The
+first screenshot in a set is the one shown in search results, so check the order
+in ASC and remove the old ones if they are not wanted.
+
 ### Still missing
 
 - **"Logged!" success overlay** — reaching it means actually submitting a
@@ -380,9 +389,10 @@ Left to do — these need you:
 
 - [ ] ⛔ **Publish the site** — Pages is not enabled and the repo is private, so both required URLs 404. See the blocker in §3.
 - [ ] **Demo Beeminder account** — create one with a few sample goals; put its username + API key in Review Notes (§5). *Do not use your personal key.*
-- [x] **Screenshots** — 1 iPhone + 3 Apple Watch captured and committed (§8)
+- [x] **Screenshots** — 1 iPhone + 3 Apple Watch captured, committed, and uploaded to ASC (§8)
+- [ ] Decide what to do with the two older screenshots already in ASC from 2026-01-29 (one 46mm watch, one iPhone) — they sit alongside the new ones; screenshot order sets which is the hero image
 - [ ] *Optional:* complication-on-face shot and the "Logged!" overlay (§8, "Still missing")
-- [ ] Create the app record in App Store Connect and paste the §1/§2 metadata
+- [x] App record exists (`beeWatch for Beeminder`, app id 6758437141) and the §1/§2 metadata is pushed and verified — via `AppStore/push-metadata.py`
 - [ ] Answer App Privacy as "no data collected" (§4) and the age questionnaire (all "None" → 4+)
 - [ ] Set price (Free)
 - [ ] Upload build 1.0 (2) and attach it to the version

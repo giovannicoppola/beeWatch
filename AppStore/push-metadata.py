@@ -126,7 +126,8 @@ class Client:
     def __init__(self, token: str):
         self.token = token
 
-    def request(self, method, path, body=None, raw=None, content_type=None, base=None):
+    def request(self, method, path, body=None, raw=None, content_type=None, base=None,
+                tolerate=False):
         url = path if path.startswith("http") else (base or API) + path
         data = raw if raw is not None else (json.dumps(body).encode() if body else None)
         req = urllib.request.Request(url, data=data, method=method)
@@ -138,7 +139,8 @@ class Client:
         try:
             with urllib.request.urlopen(req) as resp:
                 payload = resp.read()
-                return json.loads(payload) if payload and resp.status != 204 else {}
+                result = json.loads(payload) if payload and resp.status != 204 else {}
+                return (True, result) if tolerate else result
         except urllib.error.HTTPError as e:
             detail = e.read().decode(errors="replace")
             try:
@@ -148,6 +150,8 @@ class Client:
                 ) or detail
             except Exception:
                 pass
+            if tolerate:
+                return False, detail
             sys.exit(f"\n{method} {url}\nHTTP {e.code}\n{detail}\n")
 
     get = lambda self, p: self.request("GET", p)
@@ -238,8 +242,22 @@ def push_version_localization(api: Client, version_id: str, apply: bool):
     if loc:
         print(f"  localization -> patch {loc['id']}")
         if apply:
-            api.patch(f"/v1/appStoreVersionLocalizations/{loc['id']}",
-                      {"data": {"type": "appStoreVersionLocalizations", "id": loc["id"], "attributes": attrs}})
+            def send(payload):
+                return api.request(
+                    "PATCH", f"/v1/appStoreVersionLocalizations/{loc['id']}",
+                    {"data": {"type": "appStoreVersionLocalizations", "id": loc["id"],
+                              "attributes": payload}},
+                    tolerate=True)
+
+            ok, err = send(attrs)
+            if not ok and "whatsNew" in err:
+                # A first release has nothing to be new about; ASC rejects the
+                # field outright until there is a previous version.
+                print("    (first release: whatsNew not editable, sending without it)")
+                without = {k: v for k, v in attrs.items() if k != "whatsNew"}
+                ok, err = send(without)
+            if not ok:
+                sys.exit(f"\nPATCH appStoreVersionLocalizations failed:\n{err}\n")
         return loc["id"]
     print(f"  localization -> create {LOCALE}")
     if not apply:
