@@ -162,9 +162,9 @@ collected by the developer.*
 | **Sign-in required?** | Yes — the app needs a Beeminder API key. |
 | **Demo account** | ✅ Already set on the version: `testcore`, password stored, notes carry its Beeminder API key. Set up for the TestFlight beta and present on the App Store review detail too. |
 | **Contact** | ✅ Set 2026-09-22 (Giovanni Coppola, personal email and phone), copied from the TestFlight record. These are two **separate** resources in ASC — `betaAppReviewDetail` vs `appStoreReviewDetail` — and filling one does not fill the other. |
-| **Notes** | Use the block below. |
+| **Notes** | ✅ Set 2026-09-22 — full testing walkthrough (1,961 chars), including the demo Beeminder API key, watch-first setup steps, and how to add a complication. The block below is the source. |
 
-### Review notes (paste into "Notes")
+### Review notes (already pushed; kept here as the source)
 ```
 beeWatch is a third-party client for Beeminder (https://www.beeminder.com), a goal-tracking service. It is not affiliated with Beeminder Corp.
 
@@ -387,7 +387,7 @@ Left to do — these need you:
 - [ ] *Optional:* complication-on-face shot and the "Logged!" overlay (§8, "Still missing")
 - [x] App record exists (`beeWatch for Beeminder`, app id 6758437141) and the §1/§2 metadata is pushed and verified — via `AppStore/push-metadata.py`
 - [ ] Answer App Privacy as "no data collected" (§4) and the age questionnaire (all "None" → 4+)
-- [ ] Set **Content Rights** — currently unset on the app record (`contentRightsDeclaration: None`); the answer is "does not contain third-party content"
+- [x] **Content Rights** — set to `DOES_NOT_USE_THIRD_PARTY_CONTENT`
 - [ ] Set price (Free)
 - [ ] Upload build **1.0 (11)** and attach it to the version — builds 1–10 exist but none is attached, and build 10 predates the version-propagation fix
 - [ ] Submit for review
