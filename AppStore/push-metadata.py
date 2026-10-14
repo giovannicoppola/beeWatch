@@ -38,7 +38,7 @@ SHOTS = REPO / "AppStore" / "screenshots"
 
 # ---------------------------------------------------------------- copy ------
 
-NAME = "beeWatch: Goal Logger"
+NAME = "beeWatcher"
 SUBTITLE = "Goal logging on your wrist"
 
 PROMOTIONAL_TEXT = (
