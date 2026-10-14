@@ -30,8 +30,8 @@ privacy URLs are live (§3), and the metadata is pushed to App Store Connect.
 
 | Field | Value | Notes |
 |---|---|---|
-| **App Name** | `beeWatch for Beeminder` | 22/30 chars. **Chosen** — nominative use, helps people searching "Beeminder" find it. |
-| **Subtitle** | `Beeminder goals on your wrist` | 29/30 chars. |
+| **App Name** | `beeWatch: Goal Logger` | 21/30 chars. Plain `beeWatch` is taken by another developer (ASC 409). Was `beeWatch for Beeminder` until App Review flagged Beeminder references under 4.1(a) on 2026-10-02; Beeminder is now named only in the description, as a compatibility statement. |
+| **Subtitle** | `Goal logging on your wrist` | 26/30 chars. Was `Beeminder goals on your wrist`. |
 | **Primary category** | Productivity | |
 | **Secondary category** | Health & Fitness | Optional; fits habit/goal tracking. |
 | **Content rights** | Does **not** contain third-party content | You wrote all the code/copy. |
