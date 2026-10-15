@@ -126,6 +126,28 @@ tracked and is now in `.gitignore`.
 > Keep the repo public. Making it private again breaks both required URLs and
 > the support contact.
 
+### Moving to Cloudflare Pages so the repo can go private (started 2026-10-14)
+
+The same `docs/` is also deployed to **https://beewatch.pages.dev** with
+`Tools/deploy-site.sh`, the same setup Wristwise uses. Cloudflare Pages works
+from a private repo. It serves `/support` and `/privacy`, and redirects the
+`.html` forms there with a 308, so all three pages return 200. The listing still
+points at GitHub Pages; nothing has been switched yet.
+
+To finish, after 1.0 is approved:
+1. Replace the GitHub links on the site. The support page's only contact channel
+   is `github.com/giovannicoppola/beeWatch/issues/new`, and the privacy and
+   landing pages link to the repo and its README. All of these 404 once the repo
+   is private. Wristwise uses a Web3Forms contact form instead, with the key in
+   a gitignored `.env`. Redeploy afterwards.
+2. In the next version, set the Support URL to `https://beewatch.pages.dev/support`
+   and the Marketing URL to `https://beewatch.pages.dev/`. Both are version-level
+   fields, so they can only change while a version is editable. Set the Privacy
+   Policy URL (App Information) to `https://beewatch.pages.dev/privacy`, and update
+   `SUPPORT_URL`/`MARKETING_URL` in `push-metadata.py`.
+3. Once the new version is live, make the repo private. GitHub Pages then stops
+   serving `giovannicoppola.github.io/beeWatch`.
+
 Both pages are plain HTML reusing the site's `style.css`, linked from the landing
 page's nav and footer. `AppStore/PrivacyPolicy.md` is the Markdown source of the
 same text — edit it and `docs/privacy.html` together.
