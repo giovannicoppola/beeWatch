@@ -6,6 +6,7 @@ struct ContentView: View {
     @State private var defaultComment: String = ""
     @State private var isTesting = false
     @State private var testResult: TestResult?
+    @State private var showingFailedAlert = false
     @State private var showingClearConfirmation = false
     @State private var showingSavedAlert = false
 
@@ -14,7 +15,7 @@ struct ContentView: View {
     var body: some View {
         NavigationStack {
             Form {
-                if settings.isConfigured {
+                if settings.isVerified {
                     Section {
                         HStack(spacing: 12) {
                             Image(systemName: "checkmark.circle.fill")
@@ -42,6 +43,13 @@ struct ContentView: View {
                     SecureField("API Key", text: $apiKey)
                         .textInputAutocapitalization(.never)
                         .autocorrectionDisabled()
+                        .onChange(of: apiKey) { _, newValue in
+                            // Accept the whole auth_token.json page, not just the key
+                            if let page = AuthTokenPage(pasted: newValue) {
+                                apiKey = page.authToken
+                                username = page.username
+                            }
+                        }
 
                     TextField("Username (optional)", text: $username)
                         .textInputAutocapitalization(.never)
@@ -49,7 +57,7 @@ struct ContentView: View {
                 } header: {
                     Text("Beeminder Account")
                 } footer: {
-                    Text("Leave username blank to use 'me' (recommended)")
+                    Text("Paste your API key, or the whole page from \"Get API Key from Beeminder\" below. The username is filled in once Beeminder accepts the key.")
                 }
 
                 Section {
@@ -63,7 +71,7 @@ struct ContentView: View {
 
                 Section {
                     Button {
-                        testConnection()
+                        testConnection(showAlert: false)
                     } label: {
                         HStack {
                             Text("Test Connection")
@@ -76,8 +84,7 @@ struct ContentView: View {
                     .disabled(apiKey.isEmpty || isTesting)
 
                     Button {
-                        saveSettings()
-                        showingSavedAlert = true
+                        testConnection(showAlert: true)
                     } label: {
                         HStack {
                             Text("Save Settings")
@@ -85,11 +92,11 @@ struct ContentView: View {
                             Image(systemName: "checkmark.circle")
                         }
                     }
-                    .disabled(apiKey.isEmpty)
+                    .disabled(apiKey.isEmpty || isTesting)
                 }
 
                 Section {
-                    Link(destination: URL(string: "https://www.beeminder.com/settings/account")!) {
+                    Link(destination: URL(string: "https://www.beeminder.com/api/v1/auth_token.json")!) {
                         HStack {
                             Text("Get API Key from Beeminder")
                             Spacer()
@@ -107,7 +114,7 @@ struct ContentView: View {
                 } header: {
                     Text("Help")
                 } footer: {
-                    Text("Your API key can be found in your Beeminder account settings under 'Auth Token'.")
+                    Text("Sign in to Beeminder if asked. The page shows your username and API key; copy all of it and paste it above.")
                 }
 
                 if settings.isConfigured {
@@ -128,12 +135,21 @@ struct ContentView: View {
             .alert("Settings Saved", isPresented: $showingSavedAlert) {
                 Button("OK", role: .cancel) { }
             } message: {
-                Text("Your settings have been saved. Open the Watch app to see your goals.")
+                Text("Beeminder accepted your API key. Open the Watch app to see your goals.")
+            }
+            .alert("Couldn't Connect", isPresented: $showingFailedAlert) {
+                Button("OK", role: .cancel) { }
+            } message: {
+                Text(testResult?.message ?? "Beeminder didn't accept this API key.")
             }
             .onAppear {
                 apiKey = settings.apiKey
                 username = settings.username == "me" ? "" : settings.username
                 defaultComment = settings.defaultComment
+                // A key saved by an earlier build, or sent from the watch, hasn't been checked yet
+                if settings.isConfigured && !settings.isVerified {
+                    testConnection(showAlert: false)
+                }
             }
             .confirmationDialog(
                 "Clear Settings",
@@ -156,10 +172,17 @@ struct ContentView: View {
 
     private var statusView: some View {
         HStack {
-            if settings.isConfigured {
+            if settings.isVerified {
                 Image(systemName: "checkmark.circle.fill")
                     .foregroundColor(.green)
-                Text("Connected")
+                Text("Connected as \(settings.username)")
+            } else if isTesting {
+                ProgressView()
+                Text("Checking with Beeminder…")
+            } else if settings.isConfigured {
+                Image(systemName: "exclamationmark.circle.fill")
+                    .foregroundColor(.orange)
+                Text("Not verified")
             } else {
                 Image(systemName: "xmark.circle.fill")
                     .foregroundColor(.red)
@@ -183,32 +206,41 @@ struct ContentView: View {
         WatchConnectivityManager.shared.sendSettingsToWatch()
     }
 
-    private func testConnection() {
-        saveSettings()
+    /// Checks the key with Beeminder before calling the connection good, then saves
+    /// the account's real username so requests don't rely on "me".
+    private func testConnection(showAlert: Bool) {
+        let key = apiKey.trimmingCharacters(in: .whitespacesAndNewlines)
+        apiKey = key
         isTesting = true
         testResult = nil
 
         Task {
             do {
-                let goals = try await BeeminderAPI.shared.fetchGoals()
+                let owner = try await BeeminderAPI.shared.verify(apiKey: key)
                 await MainActor.run {
-                    testResult = TestResult(
-                        success: true,
-                        message: "Found \(goals.count) goals"
-                    )
+                    username = owner
+                    saveSettings()
+                    settings.verifiedKey = key
+                    testResult = TestResult(success: true, message: "Connected as \(owner)")
+                    if showAlert { showingSavedAlert = true }
                 }
             } catch {
                 await MainActor.run {
-                    testResult = TestResult(
-                        success: false,
-                        message: error.localizedDescription
-                    )
+                    testResult = TestResult(success: false, message: Self.describe(error))
+                    if showAlert { showingFailedAlert = true }
                 }
             }
             await MainActor.run {
                 isTesting = false
             }
         }
+    }
+
+    private static func describe(_ error: Error) -> String {
+        if case APIError.httpError(let code, _) = error, code == 401 || code == 404 {
+            return "Beeminder didn't accept this API key. Check that you copied all of it."
+        }
+        return error.localizedDescription
     }
 }
 

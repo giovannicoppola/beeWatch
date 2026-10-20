@@ -7,6 +7,7 @@ final class UserSettings {
     private let apiKeyKey = "com.beewatch.apikey"
     private let usernameKey = "com.beewatch.username"
     private let defaultCommentKey = "com.beewatch.defaultComment"
+    private let verifiedKeyKey = "com.beewatch.verifiedKey"
 
     // Use App Group shared container for data sharing with complications
     // Try App Group first, fall back to standard if not available
@@ -18,6 +19,7 @@ final class UserSettings {
     private var _apiKey: String = ""
     private var _username: String = "me"
     private var _defaultComment: String = "from my Apple Watch"
+    private var _verifiedKey: String = ""
 
     var apiKey: String {
         get { _apiKey }
@@ -48,8 +50,23 @@ final class UserSettings {
         }
     }
 
+    /// The API key Beeminder last accepted. Changing `apiKey` doesn't clear it,
+    /// but `isVerified` compares the two, so a new key starts out unverified.
+    var verifiedKey: String {
+        get { _verifiedKey }
+        set {
+            _verifiedKey = newValue
+            UserDefaults.standard.set(newValue, forKey: verifiedKeyKey)
+        }
+    }
+
     var isConfigured: Bool {
         !_apiKey.isEmpty
+    }
+
+    /// True only once Beeminder has accepted the current key, not merely when one is typed.
+    var isVerified: Bool {
+        isConfigured && _verifiedKey == _apiKey
     }
 
     private init() {
@@ -63,6 +80,7 @@ final class UserSettings {
         _defaultComment = sharedDefaults.string(forKey: defaultCommentKey)
             ?? UserDefaults.standard.string(forKey: defaultCommentKey)
             ?? "from my Apple Watch"
+        _verifiedKey = UserDefaults.standard.string(forKey: verifiedKeyKey) ?? ""
     }
 
     func reloadSettings() {
@@ -81,5 +99,6 @@ final class UserSettings {
         apiKey = ""
         username = "me"
         defaultComment = "from my Apple Watch"
+        verifiedKey = ""
     }
 }
