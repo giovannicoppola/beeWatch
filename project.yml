@@ -46,7 +46,7 @@ targets:
         TARGETED_DEVICE_FAMILY: "1"   # iPhone only: iPad cannot pair with an Apple Watch
         INFOPLIST_GENERATION_MODE: GeneratedFile
         MARKETING_VERSION: "1.0"
-        CURRENT_PROJECT_VERSION: "12"
+        CURRENT_PROJECT_VERSION: "14"
         GENERATE_INFOPLIST_FILE: YES
         INFOPLIST_KEY_ITSAppUsesNonExemptEncryption: NO
         INFOPLIST_KEY_UIApplicationSceneManifest_Generation: YES
@@ -73,7 +73,7 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.beewatch.ios.watchkitapp
         MARKETING_VERSION: "1.0"
-        CURRENT_PROJECT_VERSION: "12"
+        CURRENT_PROJECT_VERSION: "14"
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
     info:
       path: beeWatch Watch App/Info.plist
@@ -117,7 +117,7 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.beewatch.ios.watchkitapp.complications
         MARKETING_VERSION: "1.0"
-        CURRENT_PROJECT_VERSION: "12"
+        CURRENT_PROJECT_VERSION: "14"
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME: AccentColor
         SKIP_INSTALL: YES

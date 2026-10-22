@@ -61,7 +61,11 @@ final class UserSettings {
     }
 
     var isConfigured: Bool {
-        !_apiKey.isEmpty
+        #if DEBUG
+        // The sample goals need no key (see SampleGoals).
+        if SampleGoals.isOn { return true }
+        #endif
+        return !_apiKey.isEmpty
     }
 
     /// True only once Beeminder has accepted the current key, not merely when one is typed.

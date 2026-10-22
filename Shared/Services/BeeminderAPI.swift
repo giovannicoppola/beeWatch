@@ -46,6 +46,11 @@ actor BeeminderAPI {
         UserSettings.shared
     }
 
+    #if DEBUG
+    /// Answers every call below instead of Beeminder when launched with `-sample YES`.
+    private var sample = SampleGoals()
+    #endif
+
     // MARK: - Account
 
     /// Asks Beeminder who owns `apiKey` and returns that username.
@@ -68,6 +73,9 @@ actor BeeminderAPI {
     // MARK: - Goals
 
     func fetchGoals() async throws -> [GoalResponse] {
+        #if DEBUG
+        if SampleGoals.isOn { return sample.goals }
+        #endif
         guard settings.isConfigured else {
             throw APIError.notConfigured
         }
@@ -86,6 +94,9 @@ actor BeeminderAPI {
     }
 
     func fetchGoal(slug: String) async throws -> GoalResponse {
+        #if DEBUG
+        if SampleGoals.isOn, let goal = sample.goal(slug: slug) { return goal }
+        #endif
         guard settings.isConfigured else {
             throw APIError.notConfigured
         }
@@ -106,6 +117,9 @@ actor BeeminderAPI {
     // MARK: - Datapoints
 
     func fetchDatapoints(goalSlug: String, count: Int = 20) async throws -> [DatapointResponse] {
+        #if DEBUG
+        if SampleGoals.isOn { return Array(sample.datapoints(slug: goalSlug).suffix(count)) }
+        #endif
         guard settings.isConfigured else {
             throw APIError.notConfigured
         }
@@ -162,6 +176,9 @@ actor BeeminderAPI {
     }
 
     func createDatapoint(goalSlug: String, value: Double, comment: String = "", timestamp: Date? = nil) async throws -> DatapointResponse {
+        #if DEBUG
+        if SampleGoals.isOn { return sample.log(value, slug: goalSlug, comment: comment) }
+        #endif
         guard settings.isConfigured else {
             throw APIError.notConfigured
         }
