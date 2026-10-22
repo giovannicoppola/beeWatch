@@ -1,0 +1,15 @@
+{
+  "name": "beewatch-tour",
+  "private": true,
+  "description": "Films, cuts and narrates the Apple Watch tour for the landing page. See README.md.",
+  "type": "module",
+  "scripts": {
+    "watch-record": "node watch-record.mjs ${WATCH_SIM:?set WATCH_SIM to a watchOS simulator udid} ../../build/watch-tour",
+    "watch-voice": "${KOKORO_PYTHON:-python3} narrate.py watch-narration.txt ../../build/watch-tour/voice --voice af_heart",
+    "watch-plan": "${KOKORO_PYTHON:-python3} plan.py ../../build/watch-tour ../../build/watch-tour/voice 0.16",
+    "watch-video": "node watch-compose.mjs ../../build/watch-tour ../../docs/media/beewatch-watch-tour.mp4 && ${KOKORO_PYTHON:-python3} mix.py ../../build/watch-tour ../../build/watch-tour/voice ../../docs/media/beewatch-watch-tour.mp4"
+  },
+  "devDependencies": {
+    "playwright-core": "1.56.1"
+  }
+}

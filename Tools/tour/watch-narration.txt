@@ -1,0 +1,5 @@
+# One line per caption, in order, and the last over the end card. Read by narrate.py.
+Your Beeminder goals on your wrist, the most urgent first.
+Tap a goal, pick a quick value, confirm, and it's logged.
+Back on the list, it's safe for two more days.
+beeWatch. Beeminder, on your wrist.
