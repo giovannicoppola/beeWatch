@@ -22,4 +22,8 @@ cp -R "$REPO/docs/." "$OUT/"
 # Jekyll and GitHub Pages leftovers mean nothing to Cloudflare.
 rm -f "$OUT/_config.yml" "$OUT/.nojekyll"
 
+# Pages looks for functions/ in the directory it is run from: functions/media/[[path]].js serves
+# media/ in byte ranges, without which Safari will not play the tour video at all. (GitHub Pages
+# serves ranges itself.)
+cd "$REPO"
 wrangler pages deploy "$OUT" --project-name "$PROJECT" --branch main --commit-dirty=true
