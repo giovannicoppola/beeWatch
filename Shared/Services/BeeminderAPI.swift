@@ -46,9 +46,36 @@ actor BeeminderAPI {
         UserSettings.shared
     }
 
+    #if DEBUG
+    /// Answers every call below instead of Beeminder when launched with `-sample YES`.
+    private var sample = SampleGoals()
+    #endif
+
+    // MARK: - Account
+
+    /// Asks Beeminder who owns `apiKey` and returns that username.
+    /// Throws if Beeminder rejects the key or can't be reached.
+    func verify(apiKey: String) async throws -> String {
+        var components = URLComponents(string: "\(baseURL)/users/me.json")
+        components?.queryItems = [URLQueryItem(name: "auth_token", value: apiKey)]
+        guard let url = components?.url else {
+            throw APIError.invalidURL
+        }
+
+        let data = try await performRequest(URLRequest(url: url))
+        do {
+            return try JSONDecoder().decode(UserResponse.self, from: data).username
+        } catch {
+            throw APIError.decodingError(error)
+        }
+    }
+
     // MARK: - Goals
 
     func fetchGoals() async throws -> [GoalResponse] {
+        #if DEBUG
+        if SampleGoals.isOn { return sample.goals }
+        #endif
         guard settings.isConfigured else {
             throw APIError.notConfigured
         }
@@ -67,6 +94,9 @@ actor BeeminderAPI {
     }
 
     func fetchGoal(slug: String) async throws -> GoalResponse {
+        #if DEBUG
+        if SampleGoals.isOn, let goal = sample.goal(slug: slug) { return goal }
+        #endif
         guard settings.isConfigured else {
             throw APIError.notConfigured
         }
@@ -87,6 +117,9 @@ actor BeeminderAPI {
     // MARK: - Datapoints
 
     func fetchDatapoints(goalSlug: String, count: Int = 20) async throws -> [DatapointResponse] {
+        #if DEBUG
+        if SampleGoals.isOn { return Array(sample.datapoints(slug: goalSlug).suffix(count)) }
+        #endif
         guard settings.isConfigured else {
             throw APIError.notConfigured
         }
@@ -143,6 +176,9 @@ actor BeeminderAPI {
     }
 
     func createDatapoint(goalSlug: String, value: Double, comment: String = "", timestamp: Date? = nil) async throws -> DatapointResponse {
+        #if DEBUG
+        if SampleGoals.isOn { return sample.log(value, slug: goalSlug, comment: comment) }
+        #endif
         guard settings.isConfigured else {
             throw APIError.notConfigured
         }
@@ -230,6 +266,33 @@ actor BeeminderAPI {
 }
 
 // MARK: - API Response Models
+
+struct UserResponse: Codable {
+    let username: String
+}
+
+/// The page at beeminder.com/api/v1/auth_token.json, which users can paste whole
+/// instead of copying the key out of it.
+struct AuthTokenPage: Codable {
+    let username: String
+    let authToken: String
+
+    enum CodingKeys: String, CodingKey {
+        case username
+        case authToken = "auth_token"
+    }
+
+    init?(pasted text: String) {
+        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard trimmed.hasPrefix("{"),
+              let data = trimmed.data(using: .utf8),
+              let page = try? JSONDecoder().decode(AuthTokenPage.self, from: data),
+              !page.authToken.isEmpty else {
+            return nil
+        }
+        self = page
+    }
+}
 
 struct GoalResponse: Codable {
     let slug: String

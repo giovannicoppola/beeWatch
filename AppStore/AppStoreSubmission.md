@@ -6,15 +6,17 @@ from you; everything else is done and verified in the repo.
 
 **Status (2026-09-22):** the build side is finished — a signed App Store IPA
 containing all three bundles builds and exports cleanly from the command line
-(see §6) — and the screenshots are captured (§8). **One hard blocker remains:**
-the support and privacy URLs are not published (§3). After that it's a demo
-account and pasting the metadata into App Store Connect.
+(see §6), the screenshots are captured and uploaded (§8), the support and
+privacy URLs are live (§3), and the metadata is pushed to App Store Connect.
+**What's left: a demo Beeminder account for review notes, uploading build
+1.0 (2), and hitting Submit.**
 
 - **App name (internal):** beeWatch
 - **Bundle ID (iOS app):** `com.beewatch.ios`
 - **Bundle ID (watch app):** `com.beewatch.ios.watchkitapp`
 - **Bundle ID (complications ext.):** `com.beewatch.ios.watchkitapp.complications`
-- **Version / Build:** 1.0 / 2
+- **Version / Build:** 1.0 / 12  (builds 1–11 precede it on ASC)
+- **Devices:** iPhone + Apple Watch. **Not iPad** — see §6a.
 - **Primary platform:** iOS + watchOS (Apple Watch app with WidgetKit complications)
 
 > beeWatch is an independent, third-party client for **Beeminder**. The metadata
@@ -28,8 +30,8 @@ account and pasting the metadata into App Store Connect.
 
 | Field | Value | Notes |
 |---|---|---|
-| **App Name** | `beeWatch for Beeminder` | 22/30 chars. **Chosen** — nominative use, helps people searching "Beeminder" find it. |
-| **Subtitle** | `Beeminder goals on your wrist` | 29/30 chars. |
+| **App Name** | `beeWatcher` | 10/30 chars. Plain `beeWatch` is taken by another developer (ASC 409); `beeWatch: Goal Logger` was used briefly on 2026-10-14. The home-screen name is still `beeWatch`. Was `beeWatch for Beeminder` until App Review flagged Beeminder references under 4.1(a) on 2026-10-02; Beeminder is now named only in the description, as a compatibility statement. |
+| **Subtitle** | `Goal logging on your wrist` | 26/30 chars. Was `Beeminder goals on your wrist`. |
 | **Primary category** | Productivity | |
 | **Secondary category** | Health & Fitness | Optional; fits habit/goal tracking. |
 | **Content rights** | Does **not** contain third-party content | You wrote all the code/copy. |
@@ -106,37 +108,49 @@ at the bottom.)
 
 | Field | Value | Status |
 |---|---|---|
-| **Support URL** (required) | `https://giovannicoppola.github.io/beeWatch/support.html` | ⛔ **BLOCKED** — page written (`docs/support.html`), but Pages is not enabled. |
-| **Marketing URL** (optional) | `https://giovannicoppola.github.io/beeWatch/` | ⛔ **BLOCKED** — same reason. This site has never actually been published. |
-| **Privacy Policy URL** (required) | `https://giovannicoppola.github.io/beeWatch/privacy.html` | ⛔ **BLOCKED** — page written (`docs/privacy.html`), Pages not enabled. |
+| **Support URL** (required) | `https://giovannicoppola.github.io/beeWatch/support.html` | ✅ **Live** (verified 2026-09-22, HTTP 200 over HTTPS). |
+| **Marketing URL** (optional) | `https://giovannicoppola.github.io/beeWatch/` | ✅ **Live**. |
+| **Privacy Policy URL** (required) | `https://giovannicoppola.github.io/beeWatch/privacy.html` | ✅ **Live**. |
 
-### ⛔ Blocker: the site is not published
+The repo was made public and GitHub Pages enabled on `main` → `/docs`. All three
+URLs return 200, and the support page's contact channel
+(`github.com/giovannicoppola/beeWatch/issues`) is publicly reachable, which is
+what makes it valid as an Apple support URL.
 
-Verified 2026-09-22: the repo is **private**, `has_pages` is **false**, and all
-three URLs return 404. The pages exist in `docs/` and render correctly, but
-nothing serves them. **You cannot submit until these two URLs resolve** — a dead
-privacy or support URL is a standard rejection.
+Before publishing, the full git history was swept: the Beeminder API key appears
+in no blob in any commit, and the only credential-ish file ever committed
+(`.claude/settings.local.json`, removed in 1e6127e) held nothing but tool
+permission allowlists. `CLAUDE.md`, which does hold the key, has never been
+tracked and is now in `.gitignore`.
 
-There is a second problem behind the first: the support page's contact channel is
-**GitHub Issues**, which a reviewer cannot reach on a private repo.
+> Keep the repo public. Making it private again breaks both required URLs and
+> the support contact.
 
-Pick one:
+### Moving to Cloudflare Pages so the repo can go private (started 2026-10-14)
 
-1. **Make the repo public, enable Pages from `main` → `/docs`.** Free, fixes both
-   URLs and the Issues contact in one move. Checked: the Beeminder API key is
-   **not** in any tracked file or in git history (it lives in the untracked
-   `CLAUDE.md`), so going public leaks nothing. Add `CLAUDE.md` to `.gitignore`
-   first so it can't be committed later.
-2. **Keep the repo private, host `docs/` elsewhere** (Cloudflare Pages, Netlify,
-   or a separate public repo containing only `docs/`). Then the support contact
-   must change from GitHub Issues to an email address, since private Issues stay
-   unreachable.
-3. **Keep it private and pay for Pages.** Pages from a private repo needs a paid
-   plan, and it still leaves the Issues contact unreachable — so this solves the
-   least for the most money.
+The same `docs/` is also deployed to **https://beewatch.pages.dev** with
+`Tools/deploy-site.sh`, the same setup Wristwise uses. Cloudflare Pages works
+from a private repo. It serves `/support` and `/privacy`, and redirects the
+`.html` forms there with a 308, so all three pages return 200. The listing still
+points at GitHub Pages; nothing has been switched yet.
 
-Whichever you choose, update the URLs above, and re-check them over HTTPS before
-submitting.
+To finish, after 1.0 is approved:
+1. Replace the GitHub links on the site. The support page's only contact channel
+   is `github.com/giovannicoppola/beeWatch/issues/new`, and the privacy and
+   landing pages link to the repo and its README. All of these 404 once the repo
+   is private. Wristwise uses a Web3Forms contact form instead, with the key in
+   a gitignored `.env`. Redeploy afterwards.
+2. In the next version, set the Support URL to `https://beewatch.pages.dev/support`
+   and the Marketing URL to `https://beewatch.pages.dev/`. Both are version-level
+   fields, so they can only change while a version is editable. Set the Privacy
+   Policy URL (App Information) to `https://beewatch.pages.dev/privacy`, and update
+   `SUPPORT_URL`/`MARKETING_URL` in `push-metadata.py`.
+3. Once the new version is live, make the repo private. GitHub Pages then stops
+   serving `giovannicoppola.github.io/beeWatch`.
+
+Both pages are plain HTML reusing the site's `style.css`, linked from the landing
+page's nav and footer. `AppStore/PrivacyPolicy.md` is the Markdown source of the
+same text — edit it and `docs/privacy.html` together.
 
 ## 4. App Privacy ("nutrition label")
 
@@ -164,16 +178,38 @@ collected by the developer.*
 
 ---
 
+## 4a. Age rating answers
+
+Answered 2026-09-22 over the API; the result is **4+**. Every content-frequency
+question is `NONE` and every capability question is `false`. The PATCH is atomic —
+App Store Connect requires all 22 required fields in a single request, and it
+mixes types: the frequency questions take a string enum
+(`NONE` / `INFREQUENT_OR_MILD` / `FREQUENT_OR_INTENSE` / `INFREQUENT` / `FREQUENT`)
+while the capability questions take booleans. `healthOrWellnessTopics` is a
+boolean despite reading like a frequency question.
+
+Three answers are judgement calls rather than facts. They look right, but they
+are declarations in your name, so check you agree:
+
+| Field | Answered | Reasoning |
+|---|---|---|
+| `healthOrWellnessTopics` | `false` | The app presents no health content of its own. It is a generic numeric tracker; a *user* may choose to track weight or exercise, but the app neither knows nor says anything about health. |
+| `userGeneratedContent` | `false` | Users enter datapoints and comments, but these go to their own Beeminder account. Nothing is shared with other users inside the app, so there is no UGC surface to moderate. |
+| `unrestrictedWebAccess` | `false` | The app opens two specific beeminder.com URLs in Safari. It embeds no browser and cannot reach arbitrary sites. |
+
+`socialMediaAgeRestricted` is left null, which is correct — it only applies when
+`socialMedia` is true, and that is false.
+
 ## 5. App Review Information
 
 | Field | Value |
 |---|---|
 | **Sign-in required?** | Yes — the app needs a Beeminder API key. |
-| **Demo account** | ⚠️ ACTION — create a **dedicated demo Beeminder account** with a few sample goals and provide its **username + API key** here. **Do NOT use your personal key.** |
-| **Contact** | Your name, email, phone. This is private to the review team — unlike the public support URL, it's fine to give your real email here. |
-| **Notes** | Use the block below. |
+| **Demo account** | ✅ Already set on the version: `testcore`, password stored, notes carry its Beeminder API key. Set up for the TestFlight beta and present on the App Store review detail too. |
+| **Contact** | ✅ Set 2026-09-22 (Giovanni Coppola, personal email and phone), copied from the TestFlight record. These are two **separate** resources in ASC — `betaAppReviewDetail` vs `appStoreReviewDetail` — and filling one does not fill the other. |
+| **Notes** | ✅ Set 2026-09-22 — full testing walkthrough (1,961 chars), including the demo Beeminder API key, watch-first setup steps, and how to add a complication. The block below is the source. |
 
-### Review notes (paste into "Notes")
+### Review notes (already pushed; kept here as the source)
 ```
 beeWatch is a third-party client for Beeminder (https://www.beeminder.com), a goal-tracking service. It is not affiliated with Beeminder Corp.
 
@@ -198,12 +234,18 @@ exported end to end.
 | Item | Status |
 |---|---|
 | **ASC app record** | `beeWatch for Beeminder`, Apple ID 6758437141, version 1.0 in PREPARE_FOR_SUBMISSION. |
-| **Version / build** | 1.0 (2), identical across all three bundles. The watch app and complications used to hardcode `1.0`/`1` in their `Info.plist`, so bumping the build number in the project never reached them — they now read `$(MARKETING_VERSION)` / `$(CURRENT_PROJECT_VERSION)`. A mismatch here is an automatic upload rejection. |
+| **Version / build** | 1.0 (11), identical across all three bundles. The watch app and complications used to hardcode `1.0`/`1` in their `Info.plist`, so bumping the build number in the project never reached them — they now read `$(MARKETING_VERSION)` / `$(CURRENT_PROJECT_VERSION)`. **Correction:** an earlier draft claimed this mismatch causes an upload rejection. It does not — builds 1–10 uploaded fine with the watch bundles stuck at build 1. The real damage was on-device: watchOS skips reinstalling a bundle whose build number hasn't changed, which is the stale-install bug that kept resurfacing. |
 | **Export compliance** | ✅ `ITSAppUsesNonExemptEncryption = false` is present in all three built bundles (iOS via `INFOPLIST_KEY_…`, watch + complications in their plists). No per-upload prompt. |
 | **Signing** | ✅ Archive + export succeed. All three bundles sign with **Apple Distribution: Giovanni Coppola (VDG762YNX9)** using the *iOS Team Store Provisioning Profile* for each bundle ID (valid to 2027-01-29). |
 | **App group** | ✅ `group.com.beewatch` is registered on all three App IDs and present in the distribution entitlements of the watch app and the complications extension. |
 | **App icon** | ✅ 1024×1024, no alpha, in all three asset catalogs; `CFBundleIconName` set in every built bundle. |
 | **Upload** | Archive the **iOS app** scheme — the watch app and complications are embedded and go up in the same archive. |
+
+### Build and upload (verified end to end, 2026-09-22)
+
+Build 11 was produced and shipped with exactly these steps: archive → export →
+`--validate-app` (VERIFY SUCCEEDED) → `--upload-app` → poll until VALID → attach
+to the version. Processing took roughly three minutes.
 
 ### Build it yourself (verified commands)
 
@@ -227,20 +269,44 @@ it the archive fails, because the only Apple Development certificate in the loca
 keychain ("Created via API") isn't in the team development profiles. That doesn't
 affect distribution — the export re-signs everything with Apple Distribution.
 
-Then upload `build/export/beeWatch.ipa` with Xcode's Organizer, Transporter, or:
+Then validate and upload. Validating first is worth the extra minute — it catches
+the same problems the upload would, without burning a build number:
 
 ```sh
+xcrun altool --validate-app -f build/export/beeWatch.ipa -t ios \
+  --apiKey PCLQ5K922S --apiIssuer <ISSUER_ID>
+
 xcrun altool --upload-app -f build/export/beeWatch.ipa -t ios \
-  --apiKey <KEY_ID> --apiIssuer <ISSUER_ID>
+  --apiKey PCLQ5K922S --apiIssuer <ISSUER_ID>
 ```
 
+The key is read from `~/.appstoreconnect/private_keys/AuthKey_PCLQ5K922S.p8`. The
+Issuer ID is on the ASC Keys page; it is not stored anywhere on this machine.
+
 **Bump the build number for every upload** — App Store Connect rejects a build
-number it has already seen. It lives in `beeWatch.xcodeproj/project.pbxproj`
+number it has already seen, and it has already seen 1 through 10. The repo now
+reads 11; the next upload after that is 12. It lives in `beeWatch.xcodeproj/project.pbxproj`
 (`CURRENT_PROJECT_VERSION`, 6 occurrences) and `project.yml` (3 occurrences); keep
 the two in sync, since `project.yml` is the XcodeGen source — they were verified
 to agree by regenerating into a scratch copy. The watch Settings
 screen shows the running version and build, which is the quick way to confirm the
 watch is running the build you think it is.
+
+## 6a. Why the app is iPhone-only
+
+The iOS target originally built for `TARGETED_DEVICE_FAMILY = "1,2"`, so App
+Store Connect classified it as an iPad app and refused submission until 13-inch
+iPad screenshots were supplied.
+
+Adding those screenshots would have been the quick fix and the wrong one. The
+iPhone app exists almost entirely to pass the API key to the watch over
+WatchConnectivity, and **an iPad cannot pair with an Apple Watch** — `WCSession`
+is not supported there at all. An iPad user would reach a settings screen whose
+main function cannot work, which invites a minimum-functionality rejection.
+
+Build 12 sets `TARGETED_DEVICE_FAMILY = 1`; the built app reports
+`UIDeviceFamily [1]`, and the iPad screenshot requirement disappears. The
+watch targets stay at family 4.
 
 ## 7. Required assets & specs
 
@@ -372,6 +438,23 @@ in ASC and remove the old ones if they are not wanted.
 > account. Accepted deliberately. If you ever want them generic, recapture
 > against the demo account with the recipe above.
 
+## 8a. Fields that live somewhere non-obvious
+
+Five requirements surfaced only when "Add for Review" was pressed, because none
+of them sit next to the copy they relate to:
+
+| Requirement | Where it actually lives |
+|---|---|
+| Copyright | `appStoreVersions.copyright` — the version, not App Information |
+| Primary category | `appInfos` **relationship**, not an attribute; the id is the literal string `PRODUCTIVITY` |
+| Privacy Policy URL | `appInfoLocalizations.privacyPolicyUrl` — *not* the version localization that holds the support and marketing URLs |
+| Price | a separate `appPriceSchedule` resource; "free" means a manual price pointing at the USA price point whose `customerPrice` is `0.0` |
+| iPad screenshots | driven by the build's `UIDeviceFamily`, so it is fixed in the project, not in ASC (§6a) |
+
+A quirk worth remembering: `GET /v1/appInfos/{id}` returns relationship `data`
+only when you pass `?include=primaryCategory`. Without it the category reads
+`None` even when it is set, which looks like a failure and is not.
+
 ## 9. Pre-submission checklist
 
 Done in the repo:
@@ -387,16 +470,18 @@ Done in the repo:
 
 Left to do — these need you:
 
-- [ ] ⛔ **Publish the site** — Pages is not enabled and the repo is private, so both required URLs 404. See the blocker in §3.
-- [ ] **Demo Beeminder account** — create one with a few sample goals; put its username + API key in Review Notes (§5). *Do not use your personal key.*
+- [x] **Site published** — repo public, Pages live on `main` → `/docs`; all three URLs verified 200 (§3)
+- [x] **Demo Beeminder account** — `testcore`, already on the version's review detail (§5)
+- [x] **Review contact info** — filled on the App Store review detail (§5)
 - [x] **Screenshots** — 1 iPhone + 3 Apple Watch captured, committed, and uploaded to ASC (§8)
 - [ ] Decide what to do with the two older screenshots already in ASC from 2026-01-29 (one 46mm watch, one iPhone) — they sit alongside the new ones; screenshot order sets which is the hero image
 - [ ] *Optional:* complication-on-face shot and the "Logged!" overlay (§8, "Still missing")
 - [x] App record exists (`beeWatch for Beeminder`, app id 6758437141) and the §1/§2 metadata is pushed and verified — via `AppStore/push-metadata.py`
 - [ ] Answer App Privacy as "no data collected" (§4) and the age questionnaire (all "None" → 4+)
-- [ ] Set price (Free)
-- [ ] Upload build 1.0 (2) and attach it to the version
-- [ ] Submit for review
+- [x] **Content Rights** — set to `DOES_NOT_USE_THIRD_PARTY_CONTENT`
+- [x] Price set to Free
+- [x] **Build 1.0 (12) uploaded and attached** (11 superseded by the iPhone-only change) — validated clean, processed to VALID, attached to version 1.0; `usesNonExemptEncryption` reads False, so no encryption prompt
+- [ ] **Submit for review** — the last step, and the only genuinely irreversible one
 
 ## Trademark & rights
 - "Beeminder" is a trademark of **Beeminder Corp.** Using "for Beeminder" as a

@@ -1,0 +1,35 @@
+# The Watch tour's own Xcode project, apart from the app's project.yml.
+# XCUITest needs a watchOS app of its own to attach to, so TourHost is an empty one; the tour
+# drives the installed beeWatch watch app by bundle id.
+name: BeeWatchWatchTour
+options:
+  bundleIdPrefix: studio.cimento.beewatch.watchtour
+  deploymentTarget:
+    watchOS: "10.0"
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    CODE_SIGNING_ALLOWED: NO
+    GENERATE_INFOPLIST_FILE: YES
+targets:
+  TourHost:
+    type: application
+    platform: watchOS
+    sources: [TourHost]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: studio.cimento.beewatch.watchtour.host
+        INFOPLIST_KEY_WKApplication: YES
+        INFOPLIST_KEY_WKWatchOnly: YES
+  WatchTourTests:
+    type: bundle.ui-testing
+    platform: watchOS
+    sources: [WatchTourTests]
+    dependencies:
+      - target: TourHost
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: studio.cimento.beewatch.watchtour.tests
+        TEST_TARGET_NAME: TourHost
+    scheme:
+      testTargets: [WatchTourTests]

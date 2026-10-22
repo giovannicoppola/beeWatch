@@ -38,8 +38,8 @@ SHOTS = REPO / "AppStore" / "screenshots"
 
 # ---------------------------------------------------------------- copy ------
 
-NAME = "beeWatch for Beeminder"
-SUBTITLE = "Beeminder goals on your wrist"
+NAME = "beeWatcher"
+SUBTITLE = "Goal logging on your wrist"
 
 PROMOTIONAL_TEXT = (
     "Log your Beeminder goals in a single tap, right from your wrist. See what's "
