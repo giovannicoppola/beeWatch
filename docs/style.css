@@ -416,6 +416,12 @@ a:hover {
 }
 
 /* Screenshots Section */
+/* The narrated watch tour, above the illustrated screens; nothing plays until pressed. */
+.tour { display: grid; grid-template-columns: minmax(0, 260px) minmax(0, 320px); gap: 36px; align-items: center; justify-content: center; margin: 0 auto 48px; }
+.tour video { display: block; width: 100%; height: auto; aspect-ratio: 9 / 16; border-radius: 20px; background: var(--secondary); box-shadow: 0 16px 40px rgba(26, 26, 46, .25); }
+.tour p { color: var(--text-light); text-align: left; margin: 0; }
+@media (max-width: 640px) { .tour { grid-template-columns: 1fr; gap: 20px; } .tour video { max-width: 260px; margin: 0 auto; } .tour p { text-align: center; } }
+
 .screenshots {
     padding: 100px 0;
     background: var(--bg-alt);
@@ -582,7 +588,9 @@ a:hover {
 
 .footer-links {
     display: flex;
-    gap: 32px;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px 32px;
 }
 
 .footer-links a {
