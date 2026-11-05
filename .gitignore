@@ -21,3 +21,6 @@ __pycache__/
 # Watch tour tooling (Tools/tour): Node modules and the generated runner project
 Tools/tour/node_modules/
 Tools/tour/watch-runner/BeeWatchWatchTour.xcodeproj/
+
+# Cloudflare Wrangler local state (Tools/deploy-site.sh)
+.wrangler/
