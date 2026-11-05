@@ -52,8 +52,53 @@ final class Goal: Identifiable, Hashable {
     // stats have not yet been confirmed fresh. UI should avoid rendering
     // alarming states (skull, red) based on the potentially stale values.
     var isOptimisticallyRefreshed: Bool = false
+    // Beeminder's autodata source name (e.g. "readwisereader"), nil for
+    // goals the user enters data for by hand.
+    var autodata: String?
 
     var id: String { slug }
+
+    /// Autodata sources that are just a pipe for datapoints the user sends
+    /// themselves; a hand-entered value from the watch is fine for these.
+    private static let manualFriendlySources: Set<String> = ["api", "ifttt", "zapier"]
+
+    /// False when an integration (Readwise, Gmail, Apple Health, …) supplies
+    /// this goal's data. Entering a value by hand there would be overwritten or
+    /// double-counted on the next fetch, so the watch hides quick entry.
+    var acceptsManualEntry: Bool {
+        Self.acceptsManualEntry(autodata: autodata)
+    }
+
+    static func acceptsManualEntry(autodata: String?) -> Bool {
+        guard let source = autodata?.lowercased(), !source.isEmpty else { return true }
+        return manualFriendlySources.contains(source)
+    }
+
+    /// Readable name of the integration feeding this goal, e.g. "Readwise Reader".
+    var autodataSourceName: String? {
+        guard let source = autodata, !source.isEmpty else { return nil }
+        let known: [String: String] = [
+            "readwisereader": "Readwise Reader",
+            "readwise": "Readwise",
+            "apple": "Apple Health",
+            "googlefit": "Google Fit",
+            "gmail": "Gmail",
+            "github": "GitHub",
+            "rescuetime": "RescueTime",
+            "todoist": "Todoist",
+            "toggl": "Toggl",
+            "trello": "Trello",
+            "fitbit": "Fitbit",
+            "strava": "Strava",
+            "duolingo": "Duolingo",
+            "withings": "Withings",
+            "clozemaster": "Clozemaster",
+            "skritter": "Skritter",
+            "habitica": "Habitica",
+            "focusmate": "Focusmate",
+        ]
+        return known[source.lowercased()] ?? source.capitalized
+    }
 
     init(slug: String, title: String, goalType: String = "", rate: Double = 0, runits: String = "d", pledge: Double = 0, safebuf: Int = 0, losedate: Date = Date(), yaw: Int = 1) {
         self.slug = slug

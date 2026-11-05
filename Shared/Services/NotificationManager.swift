@@ -81,7 +81,10 @@ final class NotificationManager: ObservableObject {
         content.title = "Time to update: \(setting.goalSlug)"
         content.body = "Don't forget to log your progress!"
         content.sound = .default
-        content.categoryIdentifier = "GOAL_REMINDER"
+        // Integration-fed goals (Readwise, Gmail, …) can't take a hand-logged
+        // value, so their reminder only offers "Open Goal".
+        let isAutodata = DataStore.shared.getGoal(slug: setting.goalSlug).map { !$0.acceptsManualEntry } ?? false
+        content.categoryIdentifier = isAutodata ? "GOAL_AUTODATA" : "GOAL_REMINDER"
         content.userInfo = ["goalSlug": setting.goalSlug]
 
         var dateComponents = DateComponents()
@@ -111,7 +114,7 @@ final class NotificationManager: ObservableObject {
         content.title = "Urgent: \(goal.title)"
         content.body = "You have \(goal.timeRemaining) left! \(goal.baremin ?? "")"
         content.sound = .defaultCritical
-        content.categoryIdentifier = "GOAL_URGENT"
+        content.categoryIdentifier = goal.acceptsManualEntry ? "GOAL_URGENT" : "GOAL_AUTODATA"
         content.interruptionLevel = .timeSensitive
         content.userInfo = ["goalSlug": goal.slug]
 
@@ -188,7 +191,14 @@ final class NotificationManager: ObservableObject {
             options: []
         )
 
-        UNUserNotificationCenter.current().setNotificationCategories([reminderCategory, urgentCategory])
+        let autodataCategory = UNNotificationCategory(
+            identifier: "GOAL_AUTODATA",
+            actions: [openAction],
+            intentIdentifiers: [],
+            options: []
+        )
+
+        UNUserNotificationCenter.current().setNotificationCategories([reminderCategory, urgentCategory, autodataCategory])
     }
 
     // MARK: - Private

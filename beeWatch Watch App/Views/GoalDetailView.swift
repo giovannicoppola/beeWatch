@@ -15,6 +15,8 @@ struct GoalDetailView: View {
     @State private var showingDataEntry = false
     @State private var showingReminders = false
     @State private var showingSuccess = false
+    @State private var isSyncing = false
+    @State private var syncFailed = false
 
     // Init that takes a Goal for backwards compatibility
     init(goal: Goal) {
@@ -28,7 +30,11 @@ struct GoalDetailView: View {
                     ScrollView {
                         VStack(spacing: 16) {
                             headerSection(goal)
-                            quickEntrySection(goal)
+                            if goal.acceptsManualEntry {
+                                quickEntrySection(goal)
+                            } else {
+                                autodataSection(goal)
+                            }
                             recentEntriesSection
                         }
                         .padding(.horizontal)
@@ -139,6 +145,56 @@ struct GoalDetailView: View {
                     .frame(maxWidth: .infinity)
             }
             .buttonStyle(.bordered)
+        }
+    }
+
+    /// Shown instead of quick entry when an integration supplies the data:
+    /// a value typed on the watch would be overwritten or double-counted.
+    private func autodataSection(_ goal: Goal) -> some View {
+        VStack(spacing: 8) {
+            Label {
+                Text("Synced from \(goal.autodataSourceName ?? "an integration")")
+            } icon: {
+                Image(systemName: "arrow.triangle.2.circlepath")
+            }
+            .font(.footnote)
+            .frame(maxWidth: .infinity, alignment: .leading)
+
+            Text("Beeminder fetches this goal's data automatically.")
+                .font(.caption2)
+                .foregroundColor(.secondary)
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+            Button {
+                syncNow()
+            } label: {
+                if isSyncing {
+                    ProgressView()
+                        .frame(maxWidth: .infinity)
+                } else {
+                    Label("Sync Now", systemImage: "arrow.clockwise")
+                        .frame(maxWidth: .infinity)
+                }
+            }
+            .buttonStyle(.borderedProminent)
+            .disabled(isSyncing)
+
+            if syncFailed {
+                Text("Couldn't reach Beeminder")
+                    .font(.caption2)
+                    .foregroundColor(.red)
+            }
+        }
+    }
+
+    private func syncNow() {
+        isSyncing = true
+        syncFailed = false
+        Task {
+            let ok = await dataStore.syncAutodata(slug: goalSlug)
+            if ok { await loadDatapoints() }
+            isSyncing = false
+            syncFailed = !ok
         }
     }
 

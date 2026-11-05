@@ -73,7 +73,8 @@ struct GoalListView: View {
                 isUpdating: goal.isOptimisticallyRefreshed || goal.queued,
                 losedate: goal.losedate,
                 needText: goal.needText,
-                pledge: goal.pledge
+                pledge: goal.pledge,
+                isAutodata: !goal.acceptsManualEntry
             )
         }
     }
@@ -212,6 +213,7 @@ struct GoalRow: Identifiable, Equatable {
     let losedate: Date
     let needText: String?
     let pledge: Double
+    let isAutodata: Bool
 }
 
 struct GoalRowView: View {
@@ -229,6 +231,12 @@ struct GoalRowView: View {
                 Text(row.title)
                     .font(.headline)
                     .lineLimit(1)
+                if row.isAutodata {
+                    // Fed by an integration; no manual entry.
+                    Image(systemName: "arrow.triangle.2.circlepath")
+                        .font(.caption2)
+                        .foregroundColor(.secondary)
+                }
             }
 
             HStack {

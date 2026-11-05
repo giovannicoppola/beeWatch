@@ -72,6 +72,14 @@ class NotificationDelegate: NSObject, WKApplicationDelegate, UNUserNotificationC
             // Otherwise the app may be suspended before the network request finishes
             Task {
                 do {
+                    // Reminders scheduled before a goal was known to be
+                    // integration-fed still carry the "Log N" buttons; never
+                    // post a hand value into an autodata goal.
+                    let goal = try await BeeminderAPI.shared.fetchGoal(slug: goalSlug)
+                    guard Goal.acceptsManualEntry(autodata: goal.autodata) else {
+                        completionHandler()
+                        return
+                    }
                     _ = try await DataStore.shared.submitDatapoint(goalSlug: goalSlug, value: value)
                     await NotificationManager.shared.showConfirmationNotification(goalSlug: goalSlug, value: value)
                 } catch {

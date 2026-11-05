@@ -76,7 +76,7 @@ final class DataStore: ObservableObject {
         let snapshots = goals.prefix(5).map { goal -> [String: Any] in
             [
                 "slug": goal.slug,
-                "title": goal.title,
+                "title": goal.displayTitle,
                 "safebuf": goal.safebuf ?? 0,
                 "losedate": goal.losedate ?? 0,
                 "baremin": goal.baremin ?? "",
@@ -107,6 +107,25 @@ final class DataStore: ObservableObject {
             // Leave existing in-memory state in place on failure; the list-level
             // refresh and complication reloads will catch up.
         }
+    }
+
+    /// For autodata goals: asks Beeminder to pull fresh data from the
+    /// integration, then re-reads the goal once the fetch has had a moment to
+    /// land. Returns false if Beeminder refused or couldn't be reached.
+    func syncAutodata(slug: String) async -> Bool {
+        let previousUpdatedAt = getGoal(slug: slug)?.updatedAt ?? 0
+        guard (try? await BeeminderAPI.shared.refreshAutodata(goalSlug: slug)) == true else {
+            return false
+        }
+        if let fresh = try? await BeeminderAPI.shared.waitForRecompute(
+            slug: slug,
+            previousUpdatedAt: previousUpdatedAt,
+            timeout: 10
+        ) {
+            mergeFreshGoal(fresh, clearOptimistic: !(fresh.queued ?? false))
+        }
+        await refreshGoals()
+        return true
     }
 
     // MARK: - Datapoints
@@ -224,7 +243,8 @@ final class DataStore: ObservableObject {
     /// Merges a freshly-fetched server response into the in-memory goal.
     private func mergeFreshGoal(_ response: GoalResponse, clearOptimistic: Bool) {
         guard let goal = getGoal(slug: response.slug) else { return }
-        goal.title = response.title
+        goal.title = response.displayTitle
+        goal.autodata = response.autodata
         goal.goalType = response.goalType ?? goal.goalType
         goal.rate = response.rate ?? goal.rate
         goal.runits = response.runits ?? goal.runits

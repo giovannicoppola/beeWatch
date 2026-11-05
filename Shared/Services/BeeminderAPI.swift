@@ -207,6 +207,21 @@ actor BeeminderAPI {
         }
     }
 
+    /// Asks Beeminder to fetch fresh data from an autodata goal's integration
+    /// (Readwise, Gmail, …) and redraw the graph. The fetch runs asynchronously
+    /// on Beeminder's side; returns true if it was queued.
+    func refreshAutodata(goalSlug: String) async throws -> Bool {
+        #if DEBUG
+        if SampleGoals.isOn { return true }
+        #endif
+        guard settings.isConfigured else {
+            throw APIError.notConfigured
+        }
+
+        let data = try await get(endpoint: "/users/\(settings.username)/goals/\(goalSlug)/refresh_graph.json")
+        return (try? JSONDecoder().decode(Bool.self, from: data)) ?? false
+    }
+
     // MARK: - HTTP Methods
 
     private func get(endpoint: String) async throws -> Data {
@@ -329,22 +344,27 @@ struct GoalResponse: Codable {
     // Human-readable "need" text, e.g. "+1 within 2 days". Deprecated by
     // Beeminder but still returned; we fall back to it after `limsum`.
     let deltaText: String?
+    // Name of the automatic data source (e.g. "readwisereader", "gmail",
+    // "apple"), or nil for a manually-entered goal. Autodata goals get their
+    // datapoints from the integration, so the watch shouldn't offer entry.
+    var autodata: String? = nil
 
-    enum CodingKeys: String, CodingKey {
-        case slug, title
-        case goalType = "goal_type"
-        case goaldate, goalval, rate, runits, pledge, safebuf, losedate
-        case thumbUrl = "thumb_url"
-        case graphUrl = "graph_url"
-        case yaw, limsum, baremin, queued, safebump, curval, kyoom
-        case updatedAt = "updated_at"
-        case deltaText = "delta_text"
+    // No CodingKeys: every decoder in BeeminderAPI uses `.convertFromSnakeCase`,
+    // which turns "updated_at" into "updatedAt" *before* matching keys. Custom
+    // raw values like `case updatedAt = "updated_at"` therefore never matched,
+    // and those fields always decoded as nil.
+
+    /// Beeminder lets the title be blank (the web UI then shows the slug), so
+    /// never hand an empty string to the UI.
+    var displayTitle: String {
+        let trimmed = title.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? slug : trimmed
     }
 
     func toGoal() -> Goal {
         let goal = Goal(
             slug: slug,
-            title: title,
+            title: displayTitle,
             goalType: goalType ?? "",
             rate: rate ?? 0,
             runits: runits ?? "d",
@@ -365,6 +385,7 @@ struct GoalResponse: Codable {
         goal.curval = curval
         goal.kyoom = kyoom ?? false
         goal.deltaText = deltaText
+        goal.autodata = autodata
         return goal
     }
 }
@@ -377,12 +398,7 @@ struct DatapointResponse: Codable {
     let comment: String?
     let updatedAt: Double?
     let requestid: String?
-
-    enum CodingKeys: String, CodingKey {
-        case id, timestamp, daystamp, value, comment
-        case updatedAt = "updated_at"
-        case requestid
-    }
+    // No CodingKeys: decoded with `.convertFromSnakeCase` (see GoalResponse).
 
     func toDatapoint(goalSlug: String) -> Datapoint {
         Datapoint(
